@@ -1,9 +1,13 @@
 // slideshow.js
-// v1.0.0, 2011-03-26
+// v1.0.1, 2011-03-27
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
 // Assumes only 1 slideshow per page.
+
+// CHANGELOG
+//
+// 1.0.1    Added showCurrentSlide
 
 // Needs a directory named "slides" under wherever the calling
 // document resides, and a directory with the name of the
@@ -25,10 +29,12 @@
 // filmstrip or slides will make bad things happen, though. Don't
 // forget to style your slide markup as well.
 
-// You'll also need the following in your HTML
+// You'll also need the following somewhere in your HTML (in no
+// particular order)
 //   <div id="slideshow"></div>
 //   <button id="prevbutt" disabled="true">Prev</button>
 //   <button id="nextbutt">Next</button>
+//   <span id="curslide"></span>
 // and that's it.
 
 
@@ -52,7 +58,7 @@ window.onload = function() {
     ss.style.height = slideHeight + "em";
     for (var i = 0; i < numSlides; i++) {
         // construct the slide URLs and fire off XHRs for them
-        var url = "/slides/" + slideShowName + "/" + i;
+        var url = "./slides/" + slideShowName + "/" + i;
         var r = new XMLHttpRequest();
         r.open("GET", url, true);
         r.onreadystatechange = createCallback(i, r);
@@ -105,6 +111,8 @@ function populateSlideShow() {
         // turn on prev/next buttons
         document.getElementById('prevbutt').addEventListener("click", function() { changeSlide(1) }, false);
         document.getElementById('nextbutt').addEventListener("click", function() { changeSlide(-1) }, false);
+        // set current slide indicator
+        showCurrentSlide();
     }
 }
 
@@ -124,5 +132,9 @@ function changeSlide(dir) {
     stripMargin = stripMargin + (slideWidth * dir);
     var strip = document.getElementById("filmstrip");
     strip.style.marginLeft = stripMargin + "em";
+    showCurrentSlide();
 }
 
+function showCurrentSlide() {
+    document.getElementById('curslide').innerHTML = curSlide + '/' + numSlides;
+}
