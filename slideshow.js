@@ -3,43 +3,45 @@
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
-// Assumes only 1 slideshow per page.
+// Assumes only 1 slideshow per page but can host many in a directory.
 
-// CHANGELOG
+//-----------------------------------------------------------------------
+
+// USAGE
 //
-// 1.1.0    Added transition animation
-// 1.0.1    Added showCurrentSlide
-
 // Needs a directory named "slides" under wherever the calling
 // document resides, and a directory with the name of the
 // slideShowName variable (set below) under "slides". The slides are
-// files in that directory, named (0, 1, 2, 3, ...) with no extension
-// and no leading zeroes. The contents of the slide files are shoved
-// into the innerHTML of the slide elements as they are created, so
-// HTML fragments are fine. They should not be complete, conformant
-// HTML docs.
-
-// You'll be needing this CSS in your document/stylesheet
+// simply files in that directory, named 0, 1, 2, 3, and so forth,
+// with no extension and no leading zeroes.
+//
+// The contents of the slide files are shoved into the innerHTML of
+// the slide elements as they are created, so HTML fragments are
+// fine. They should not be complete documents (no <html>, <head>, or
+// <body>).
+//
+// You'll need this CSS in your document/stylesheet:
 //
 //   #slideshow { overflow: hidden; margin: 0; padding: 0; }
 //   #filmstrip { height: 100%; margin: 0; padding: 0; }
 //   div.slide { display: inline-block; height: 100%; margin: 0; vertical-align: top; }
 //
-// Add colors/fonts as you like, and a border to the slideshow element
-// if you'd prefer. adding a border, margins, or padding to the
-// filmstrip or slides will make bad things happen, though. Don't
-// forget to style your slide markup as well.
-
-// You'll also need the following somewhere in your HTML (in no
-// particular order)
+// CSS customization/prettification should happen in the fragmentary
+// HTML of the slide content. Adding a border, margins, or padding to
+// #filmstrip or .slide will definitely create problems, as everything
+// relies upon precise alignment of elements.
+//
+// You'll also need the following elements somewhere in your HTML:
+//
 //   <div id="slideshow"></div>
 //   <button id="prevbutt" disabled="true">Prev</button>
 //   <button id="nextbutt">Next</button>
 //   <span id="curslide"></span>
-// and that's it.
-
-
-// edit these values to suit you
+//
+// They don't have to be in a particular order, and can be placed
+// where ever you want them.
+//
+// Finally, edit these values to suit you:
 var slideShowName = "test" // slides go in ./slides/slideShowName
 var slideWidth = 35;       // slide (and slideshow) width in ems
 var slideHeight = 20;      // height, also ems
@@ -47,7 +49,13 @@ var numSlides = 5;
 
 //-----------------------------------------------------------------------
 
-// do not edit these
+// CHANGELOG
+//
+// 1.1.0    Added transition animation
+// 1.0.1    Added showCurrentSlide
+
+//-----------------------------------------------------------------------
+
 var slides = new Object;
 var curSlide = 1;
 var stripMargin = 0;
