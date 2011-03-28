@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.0.1, 2011-03-27
+// v1.1.0, 2011-03-27
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
@@ -7,6 +7,7 @@
 
 // CHANGELOG
 //
+// 1.1.0    Added transition animation
 // 1.0.1    Added showCurrentSlide
 
 // Needs a directory named "slides" under wherever the calling
@@ -50,6 +51,7 @@ var numSlides = 5;
 var slides = new Object;
 var curSlide = 1;
 var stripMargin = 0;
+var oldStripMargin;
 
 // initialization function; a lambda called on window load
 window.onload = function() {
@@ -129,10 +131,32 @@ function changeSlide(dir) {
     }
     // move the filmstrip
     curSlide += -(dir);
-    stripMargin = stripMargin + (slideWidth * dir);
-    var strip = document.getElementById("filmstrip");
-    strip.style.marginLeft = stripMargin + "em";
+    oldStripMargin = stripMargin;
+    animateSlideTransition(1, dir, slideWidth);
     showCurrentSlide();
+}
+
+
+function animateSlideTransition(iter, dir, dist) {
+    // iteration 1,2: move 1/3 distance
+    // iteration 3-6: move 1/2 distance
+    // iteration 7: move to final position
+    var strip = document.getElementById("filmstrip");
+    if (iter == 7) {
+        stripMargin = oldStripMargin + (slideWidth * dir);
+        strip.style.marginLeft = stripMargin + "em";
+        return;
+    }
+
+    var thisMove;
+    if (iter < 3) {
+        thisMove = dist / 3;
+    } else  {
+        thisMove = dist / 2;
+    }
+    stripMargin += thisMove * dir;
+    strip.style.marginLeft = stripMargin + "em";
+    window.setTimeout(function () { animateSlideTransition(iter + 1, dir, dist - thisMove ) }, 30)
 }
 
 function showCurrentSlide() {
