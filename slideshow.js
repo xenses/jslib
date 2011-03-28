@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.1.2, 2011-03-27
+// v1.1.3, 2011-03-27
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
@@ -9,11 +9,12 @@
 
 // USAGE
 //
-// Needs a directory named "slides" under wherever the calling
+// Needs a directory named "fpslidedecks" under wherever the calling
 // document resides, and a directory with the name of the
-// slideShowName variable (set below) under "slides". The slides are
-// simply files in that directory, named 0, 1, 2, 3, and so forth,
-// with no extension and no leading zeroes.
+// slideShowName variable (set below) under "fpslidedecks".
+//
+// The slides are simply files in that directory, named slide0000,
+// slide0001, slide0002, and so forth.
 //
 // The contents of the slide files are shoved into the innerHTML of
 // the slide elements as they are created, so HTML fragments are
@@ -51,6 +52,8 @@ var numSlides = 5;
 
 // CHANGELOG
 //
+// 1.1.3 Changed slide deck directory name and slide naming scheme
+//
 // 1.1.2 Condensed variable declarations
 //
 // 1.1.1 Made control variable and button initialization more reliable
@@ -74,7 +77,11 @@ window.onload = function() {
     ss.style.height = slideHeight + "em";
     for (var i = 0; i < numSlides; i++) {
         // construct the slide URLs and fire off XHRs for them
-        var url = "./slides/" + slideShowName + "/" + i;
+        var leadingZs = '000';
+        if (i > 9)   { leadingZs = '00' }
+        if (i > 99)  { leadingZs = '0' }
+        if (i > 999) { leadingZs = '' }
+        var url = "./fpslidedecks/" + slideShowName + "/slide" + leadingZs + i;
         var r = new XMLHttpRequest();
         r.open("GET", url, true);
         r.onreadystatechange = createCallback(i, r);
