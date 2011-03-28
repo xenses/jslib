@@ -161,7 +161,7 @@ function changeSlide(dir) {
 
 // animateSlideTransition
 //
-// This functions is called recursively to animate switching from one
+// This function is called recursively to animate switching from one
 // slide to the next. It takes three arguments:
 //
 //   frame  the current frame of the animation
