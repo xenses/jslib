@@ -46,7 +46,7 @@
 var slideShowName = "test" // slides go in ./slides/slideShowName
 var slideWidth = 35;       // slide (and slideshow) width in ems
 var slideHeight = 20;      // height, also ems
-var numSlides = 5;
+var numSlides = 11;
 
 //-----------------------------------------------------------------------
 
@@ -78,9 +78,9 @@ window.onload = function() {
     for (var i = 0; i < numSlides; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
-        if (i > 9)   { leadingZs = '00' }
-        if (i > 99)  { leadingZs = '0' }
-        if (i > 999) { leadingZs = '' }
+        if      (i > 999) { leadingZs = '' }  // pretend to be
+        else if (i > 99)  { leadingZs = '0' } // sprintf
+        else if (i > 9)   { leadingZs = '00' }
         var url = "./fpslidedecks/" + slideShowName + "/slide" + leadingZs + i;
         var r = new XMLHttpRequest();
         r.open("GET", url, true);
@@ -159,27 +159,40 @@ function changeSlide(dir) {
     showCurrentSlide();
 }
 
-
-function animateSlideTransition(iter, dir, dist) {
-    // iteration 1,2: move 1/3 distance
-    // iteration 3-6: move 1/2 distance
-    // iteration 7: move to final position
+// animateSlideTransition
+//
+// This functions is called recursively to animate switching from one
+// slide to the next. It takes three arguments:
+//
+//   frame  the current frame of the animation
+//
+//   dir    the direction of the animation (1 for left-to-right, -1 
+//          for right-to-left)
+//
+//   dist   The distance remaining to be travelled in the animation
+//
+// The animation algorithm is very simple:
+//
+//   Frame 1,2: move 1/3 dist
+//   Frame 3-6: move 1/2 dist
+//   Frame 7  : move to final position
+function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById("filmstrip");
-    if (iter == 7) {
+    if (frame == 7) {
         stripMargin = oldStripMargin + (slideWidth * dir);
         strip.style.marginLeft = stripMargin + "em";
         return;
     }
 
     var thisMove;
-    if (iter < 3) {
+    if (frame < 3) {
         thisMove = dist / 3;
     } else  {
         thisMove = dist / 2;
     }
     stripMargin += thisMove * dir;
     strip.style.marginLeft = stripMargin + "em";
-    window.setTimeout(function () { animateSlideTransition(iter + 1, dir, dist - thisMove ) }, 30)
+    window.setTimeout(function () { animateSlideTransition(frame + 1, dir, dist - thisMove ) }, 30)
 }
 
 function showCurrentSlide() {
