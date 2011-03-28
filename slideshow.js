@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.1.1, 2011-03-27
+// v1.1.2, 2011-03-27
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
@@ -51,6 +51,8 @@ var numSlides = 5;
 
 // CHANGELOG
 //
+// 1.1.2 Condensed variable declarations
+//
 // 1.1.1 Made control variable and button initialization more reliable
 //
 // 1.1.0 Added transition animation
@@ -59,10 +61,7 @@ var numSlides = 5;
 
 //-----------------------------------------------------------------------
 
-var slides;
-var curSlide;
-var stripMargin;
-var oldStripMargin;
+var slides = curSlide = stripMargin = oldStripMargin = 0;
 
 // initialization function; a lambda called on window load
 window.onload = function() {
