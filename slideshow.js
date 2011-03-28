@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.1.0, 2011-03-27
+// v1.1.1, 2011-03-27
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
@@ -34,7 +34,7 @@
 // You'll also need the following elements somewhere in your HTML:
 //
 //   <div id="slideshow"></div>
-//   <button id="prevbutt" disabled="true">Prev</button>
+//   <button id="prevbutt">Prev</button>
 //   <button id="nextbutt">Next</button>
 //   <span id="curslide"></span>
 //
@@ -51,18 +51,25 @@ var numSlides = 5;
 
 // CHANGELOG
 //
-// 1.1.0    Added transition animation
-// 1.0.1    Added showCurrentSlide
+// 1.1.1 Made control variable and button initialization more reliable
+//
+// 1.1.0 Added transition animation
+//
+// 1.0.1 Added showCurrentSlide
 
 //-----------------------------------------------------------------------
 
-var slides = new Object;
-var curSlide = 1;
-var stripMargin = 0;
+var slides;
+var curSlide;
+var stripMargin;
 var oldStripMargin;
 
 // initialization function; a lambda called on window load
 window.onload = function() {
+    slides = new Object;
+    curSlide = 1;
+    stripMargin = 0;
+
     var ss = document.getElementById("slideshow");
     ss.style.width = slideWidth + "em";
     ss.style.height = slideHeight + "em";
@@ -119,6 +126,8 @@ function populateSlideShow() {
         // make strip the child of the slideshow
         document.getElementById("slideshow").appendChild(strip);
         // turn on prev/next buttons
+        document.getElementById('prevbutt').setAttribute("disabled", "true");
+        document.getElementById('nextbutt').removeAttribute("disabled");
         document.getElementById('prevbutt').addEventListener("click", function() { changeSlide(1) }, false);
         document.getElementById('nextbutt').addEventListener("click", function() { changeSlide(-1) }, false);
         // set current slide indicator
