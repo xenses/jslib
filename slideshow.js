@@ -50,6 +50,14 @@ var numSlides = 11;
 
 //-----------------------------------------------------------------------
 
+// TODO
+//
+// * Add first/last buttons
+//
+// * Decouple init from window.onload
+//
+// * Rewrite as object to allow more than one show per page
+
 // CHANGELOG
 //
 // 1.1.3 Changed slide deck directory name and slide naming scheme
@@ -131,7 +139,7 @@ function populateSlideShow() {
         }
         // make strip the child of the slideshow
         document.getElementById("slideshow").appendChild(strip);
-        // turn on prev/next buttons
+        // turn on buttons
         document.getElementById('prevbutt').setAttribute("disabled", "true");
         document.getElementById('nextbutt').removeAttribute("disabled");
         document.getElementById('prevbutt').addEventListener("click", function() { changeSlide(1) }, false);
