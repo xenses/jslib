@@ -9,12 +9,16 @@
 
 // USAGE
 //
-// Needs a directory named "fpslidedecks" under wherever the calling
-// document resides, and a directory with the name of the
-// slideShowName variable (set below) under "fpslidedecks".
+// One copy of this script can drive any number of slideshows. Just
+// put it where you like and call it (as described below) from any
+// HTML doc you wish.
 //
-// The slides are simply files in that directory, named slide0000,
-// slide0001, slide0002, and so forth.
+// In every directory with a slideshow doc, a subdirectory named
+// "fpslidedecks" is needed. That subdirectory holds additional
+// subdirs, one per slideshow, named after the slideshow.
+//
+// The slides are files in the deck directories. Slides are named
+// slide0000, slide0001, slide0002, and so forth.
 //
 // The contents of the slide files are shoved into the innerHTML of
 // the slide elements as they are created, so HTML fragments are
@@ -23,39 +27,44 @@
 //
 // You'll need this CSS in your document/stylesheet:
 //
-//   #slideshow { overflow: hidden; margin: 0; padding: 0; }
-//   #filmstrip { height: 100%; margin: 0; padding: 0; }
-//   div.slide { display: inline-block; height: 100%; margin: 0; vertical-align: top; }
+//   .slideshow { overflow: hidden; margin: 0; padding: 0; }
+//   .slidestrip { height: 100%; margin: 0; padding: 0; }
+//   .slide { display: inline-block; height: 100%; margin: 0; vertical-align: top; }
 //
-// CSS customization/prettification should happen in the fragmentary
-// HTML of the slide content. Adding a border, margins, or padding to
-// #filmstrip or .slide will definitely create problems, as everything
-// relies upon precise alignment of elements.
+// Adding border, margins, or padding to these classes will definitely
+// create problems, as everything relies upon precise alignment of
+// elements. Styling should be done on markup included in the slide
+// content itself.
 //
 // You'll also need the following elements somewhere in your HTML:
 //
-//   <div id="slideshow"></div>
-//   <button id="prevbutt">Prev</button>
-//   <button id="nextbutt">Next</button>
-//   <span id="curslide"></span>
+//   <div id="NAME"></div>
+//   <button id="NAMEprev">Prev</button>
+//   <button id="NAMEnext">Next</button>
+//   <span id="NAMEcounts"></span>
 //
-// They don't have to be in a particular order, and can be placed
-// where ever you want them.
+// Where "NAME" is the name you've chosen for the slideshow. The
+// elements don't have to be in a particular order, and can be placed
+// as you like.
 //
 // Finally, in your document, load the script
 //
 //   <script src='/path/to/slideshow.js'></script>
 //
-// and then, probably immediately afterward, initialize your slideshow
+// and then, probably immediately afterward, initialize your slideshow(s)
 //
-//   window.addEventListener("DOMContentLoaded", function() { slideshowinit('test', 35, 20, 11) });
+//   <script>
+//     var ss = new slideshow('test', 35, 20, 11);
+//     window.addEventListener("DOMContentLoaded", function() { ss.init() });
+//   </script>
 //
-// The arguments to slideshowinit() are the name of the slideshow, its
+// The arguments to slideshow() are: the name of the slideshow, its
 // width (in ems), height (in ems), and the number of slides in the
 // deck.
 //
-// Using "DOMContentLoaded" rather than "load" helps prevent rendering
-// flicker. If you don't like it, switch to "load".
+// Any number of slideshows can be on a single page. Just add more
+// declarations, init() calls, and sets of HTML elements (with NAME
+// changed appropriately).
 
 //-----------------------------------------------------------------------
 
