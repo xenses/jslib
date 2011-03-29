@@ -1,1 +1,5 @@
 I don't always write Javascript, but when I do it ends up in this repo.
+
+What's here:
+
+  * slideshow.js -- A self-loading, self-contained slide deck viewer.
