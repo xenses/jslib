@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.3.1
+// v1.3.2
 // 29 Mar 2011
 //
 // Basic Javascript slideshow in-an-object.
@@ -61,6 +61,8 @@
 
 // CHANGELOG
 //
+// 1.3.2 Queue slide changes while slides are changing
+//
 // 1.3.1 Prevent slide change while slide is changing
 //
 // 1.3.0 Allow multiple decks per page
@@ -91,6 +93,7 @@ function slideshow(name, x, y, num) {
     this.curSlide       = 1;
     this.stripMargin    = 0;
     this.oldStripMargin = 0;
+    this.queuedChanges  = 0;
     this.init              = init;
     this.createCallback    = createCallback;
     this.populateSlideShow = populateSlideShow;
@@ -175,7 +178,11 @@ function populateSlideShow() {
 }
 
 function changeSlide(dir) {
-    if (this.animating) { return }
+    if (this.animating) { 
+        if (Math.abs(self.queuedChanges) == self.numSlides) { return }
+        this.queuedChanges += dir;
+        return 
+    }
     this.animating = true;
     // enable the appropriate buttons
     if (dir == -1 && this.curSlide == 1) { // leaving fist slide
@@ -221,6 +228,11 @@ function animateSlideTransition(frame, dir, dist) {
         this.stripMargin = this.oldStripMargin + (this.x * dir);
         strip.style.marginLeft = this.stripMargin + "em";
         this.animating = false;
+        if (this.queuedChanges) {
+            this.queuedChanges -= dir;
+            if (dir > 0) { this.changeSlide(1)  }
+            else         { this.changeSlide(-1) }
+        }
         return;
     }
 
