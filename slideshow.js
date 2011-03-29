@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.3.0
+// v1.3.1
 // 29 Mar 2011
 //
 // Basic Javascript slideshow in-an-object.
@@ -51,7 +51,8 @@
 //   window.addEventListener("DOMContentLoaded", function() { slideshowinit('test', 35, 20, 11) });
 //
 // The arguments to slideshowinit() are the name of the slideshow, its
-// width in ems, height in ems, and the number of slides in the deck.
+// width (in ems), height (in ems), and the number of slides in the
+// deck.
 //
 // Using "DOMContentLoaded" rather than "load" helps prevent rendering
 // flicker. If you don't like it, switch to "load".
@@ -59,6 +60,8 @@
 //-----------------------------------------------------------------------
 
 // CHANGELOG
+//
+// 1.3.1 Prevent slide change while slide is changing
 //
 // 1.3.0 Allow multiple decks per page
 //
@@ -172,7 +175,9 @@ function populateSlideShow() {
 }
 
 function changeSlide(dir) {
-    // enable/disable prev/next buttons
+    if (this.animating) { return }
+    this.animating = true;
+    // enable the appropriate buttons
     if (dir == -1 && this.curSlide == 1) { // leaving fist slide
         document.getElementById(this.name + 'prev').removeAttribute("disabled");
     } else if (dir == -1 && this.curSlide == this.numSlides - 1) { // arriving at last slide
@@ -181,7 +186,7 @@ function changeSlide(dir) {
         document.getElementById(this.name + 'next').removeAttribute("disabled");
     } else if (dir == 1 &&  this.curSlide == 2) { // arriving at first slide
         document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
-    }
+    }        
     // move the slidestrip
     this.curSlide += -(dir);
     this.oldStripMargin = this.stripMargin;
@@ -215,6 +220,7 @@ function animateSlideTransition(frame, dir, dist) {
     if (frame == 7) {
         this.stripMargin = this.oldStripMargin + (this.x * dir);
         strip.style.marginLeft = this.stripMargin + "em";
+        this.animating = false;
         return;
     }
 
