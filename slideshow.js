@@ -187,6 +187,7 @@ function populateSlideShow() {
 }
 
 function changeSlide(dir) {
+    // queue changes
     if (this.animating) { 
         if (Math.abs(self.queuedChanges) == self.numSlides) { return }
         this.queuedChanges += dir;
@@ -234,10 +235,12 @@ function updateSlideCounts() {
 function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById(this.name + "slidestrip");
     if (frame == 7) {
+        // do final placement
         this.stripMargin = this.oldStripMargin + (this.x * dir);
         strip.style.marginLeft = this.stripMargin + "em";
         this.animating = false;
-        if (this.queuedChanges) {
+        // handle queued changes
+        if (this.queuedChanges != 0) {
             this.queuedChanges -= dir;
             if (dir > 0) { this.changeSlide(1)  }
             else         { this.changeSlide(-1) }
