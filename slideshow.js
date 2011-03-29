@@ -1,5 +1,6 @@
 // slideshow.js
-// v1.1.3, 2011-03-27
+// v1.1.4
+// 28 Mar 2011
 //
 // Basic Javascript slideshow in-a-box.
 // No external dependencies.
@@ -42,11 +43,19 @@
 // They don't have to be in a particular order, and can be placed
 // where ever you want them.
 //
-// Finally, edit these values to suit you:
-var slideShowName = "test" // slides go in ./slides/slideShowName
-var slideWidth = 35;       // slide (and slideshow) width in ems
-var slideHeight = 20;      // height, also ems
-var numSlides = 11;
+// Finally, in your document, load the script
+//
+//   <script src='/path/to/slideshow.js'></script>
+//
+// and then, probably immediately afterward, initialize your slideshow
+//
+//   window.addEventListener("DOMContentLoaded", function() { slideshowinit('test', 35, 20, 11) });
+//
+// The arguments to slideshowinit() are the name of the slideshow, its
+// width in ems, height in ems, and the number of slides in the deck.
+//
+// Using "DOMContentLoaded" rather than "load" helps prevent rendering
+// flicker. If you don't like it, switch to "load".
 
 //-----------------------------------------------------------------------
 
@@ -54,11 +63,12 @@ var numSlides = 11;
 //
 // * Add first/last buttons
 //
-// * Decouple init from window.onload
-//
 // * Rewrite as object to allow more than one show per page
 
 // CHANGELOG
+//
+// 1.1.4 Parameterized initialization, allowing for multiple decks
+//       without copying and editing the source file (hurp)
 //
 // 1.1.3 Changed slide deck directory name and slide naming scheme
 //
@@ -72,13 +82,20 @@ var numSlides = 11;
 
 //-----------------------------------------------------------------------
 
+var slideShowName; // slides go in ./slides/slideShowName
+var slideWidth;    // slide (and slideshow) width in ems
+var slideHeight;   // height, also ems
+var numSlides;
 var slides = curSlide = stripMargin = oldStripMargin = 0;
 
-// initialization function; a lambda called on window load
-window.onload = function() {
-    slides = new Object;
-    curSlide = 1;
-    stripMargin = 0;
+function slideshowinit(name, x, y, num) {
+    slideShowName = name;
+    slideWidth    = x;
+    slideHeight   = y;
+    numSlides     = num;
+    slides        = new Object;
+    curSlide      = 1;
+    stripMargin   = 0;
 
     var ss = document.getElementById("slideshow");
     ss.style.width = slideWidth + "em";
