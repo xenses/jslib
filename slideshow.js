@@ -2,8 +2,8 @@
 // v1.3.2
 // 29 Mar 2011
 //
-// Basic Javascript slideshow in-an-object.
-// No external dependencies.
+// A basic Javascript slideshow in-an-object.
+//
 
 //-----------------------------------------------------------------------
 
@@ -189,6 +189,9 @@ function populateSlideShow() {
 function changeSlide(dir) {
     // queue changes
     if (this.animating) { 
+        // FIXME need to not allow queued changes to exceed hte number
+        // of slides left to flip in the direction we're heading. the
+        // following line is wrong
         if (Math.abs(self.queuedChanges) == self.numSlides) { return }
         this.queuedChanges += dir;
         return 
