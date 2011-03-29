@@ -1,10 +1,9 @@
 // slideshow.js
-// v1.1.4
+// v1.2.0
 // 28 Mar 2011
 //
-// Basic Javascript slideshow in-a-box.
+// Basic Javascript slideshow in-an-object.
 // No external dependencies.
-// Assumes only 1 slideshow per page but can host many in a directory.
 
 //-----------------------------------------------------------------------
 
@@ -59,13 +58,9 @@
 
 //-----------------------------------------------------------------------
 
-// TODO
-//
-// * Add first/last buttons
-//
-// * Rewrite as object to allow more than one show per page
-
 // CHANGELOG
+//
+// 1.2.0 Objectified
 //
 // 1.1.4 Parameterized initialization, allowing for multiple decks
 //       without copying and editing the source file (hurp)
@@ -82,49 +77,53 @@
 
 //-----------------------------------------------------------------------
 
-var slideShowName; // slides go in ./slides/slideShowName
-var slideWidth;    // slide (and slideshow) width in ems
-var slideHeight;   // height, also ems
-var numSlides;
-var slides = curSlide = stripMargin = oldStripMargin = 0;
+function slideshow(name, x, y, num) {
+    this.slideShowName  = name;
+    this.slideWidth     = x;
+    this.slideHeight    = y;
+    this.numSlides      = num;
+    this.slides         = new Object;
+    this.curSlide       = 1;
+    this.stripMargin    = 0;
+    this.oldStripMargin = 0;
+    this.init              = init;
+    this.createCallback    = createCallback;
+    this.populateSlideShow = populateSlideShow;
+    this.changeSlide       = changeSlide;
+    this.updateSlideCounts = updateSlideCounts;
+    this.animateSlideTransition = animateSlideTransition;
+}
 
-function slideshowinit(name, x, y, num) {
-    slideShowName = name;
-    slideWidth    = x;
-    slideHeight   = y;
-    numSlides     = num;
-    slides        = new Object;
-    curSlide      = 1;
-    stripMargin   = 0;
-
+function init() {
     var ss = document.getElementById("slideshow");
-    ss.style.width = slideWidth + "em";
-    ss.style.height = slideHeight + "em";
-    for (var i = 0; i < numSlides; i++) {
+    ss.style.width = this.slideWidth + "em";
+    ss.style.height = this.slideHeight + "em";
+    for (var i = 0; i < this.numSlides; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
         if      (i > 999) { leadingZs = '' }  // pretend to be
         else if (i > 99)  { leadingZs = '0' } // sprintf
         else if (i > 9)   { leadingZs = '00' }
-        var url = "./fpslidedecks/" + slideShowName + "/slide" + leadingZs + i;
+        var url = "./fpslidedecks/" + this.slideShowName + "/slide" + leadingZs + i;
         var r = new XMLHttpRequest();
         r.open("GET", url, true);
-        r.onreadystatechange = createCallback(i, r);
+        r.onreadystatechange = this.createCallback(i, r);
         r.send(null);
     }
     // this waits for all slides to have their data fetched, then
     // constructs the slideshow
-    populateSlideShow();
+    this.populateSlideShow();
 }
 
-function createCallback (thisSlide, req) {
+function createCallback (slideNum, req) {
     // create a closure over the number of the slide being fetched and
     // the XHR object doing the fetching and return it, setting it as
     // the onreadystatechange value of the XHR itself
+    var slides = this.slides;
     return function() { 
         if (req.readyState == 4) {
             if (req.status == 200) {
-                slides[thisSlide] = req.responseText;
+                slides[slideNum] = req.responseText;
             }
         }
     };
@@ -132,56 +131,62 @@ function createCallback (thisSlide, req) {
 
 function populateSlideShow() {
     var allThere = true; // sentinel for all slides being fetched
-    for (var i = 0; i < numSlides; i++) {
-        if (slides[i] == null) {
+    for (var i = 0; i < this.numSlides; i++) {
+        if (this.slides[i] == null) {
             allThere = false;
         }
     }
     if (allThere == false) {
-        // if we're missing slides, call this function again in 50ms
-        window.setTimeout(populateSlideShow, 50);
+        // we're missing slides, call this function again in 50ms
+        var me = this;
+        window.setTimeout( function() { me.populateSlideShow() }, 50);
     } else {
-        // but if it's all here, then build out the slideshow
+        // it's all here, then build out the slideshow
         // create filmstrip div
         var strip = document.createElement('div');
         strip.setAttribute('id','filmstrip');
-        strip.style.width = (slideWidth * numSlides) + "em";
+        strip.style.width = (this.slideWidth * this.numSlides) + "em";
         // create slides and populate strip with them
-        for (var i = 0; i < numSlides; i++) {
+        for (var i = 0; i < this.numSlides; i++) {
             var slide = document.createElement('div');
             slide.setAttribute("class", "slide");
-            slide.style.width = slideWidth + "em";
-            slide.innerHTML = slides[i];
+            slide.style.width = this.slideWidth + "em";
+            slide.innerHTML = this.slides[i];
             strip.appendChild(slide);
         }
         // make strip the child of the slideshow
         document.getElementById("slideshow").appendChild(strip);
         // turn on buttons
+        var me = this;
         document.getElementById('prevbutt').setAttribute("disabled", "true");
         document.getElementById('nextbutt').removeAttribute("disabled");
-        document.getElementById('prevbutt').addEventListener("click", function() { changeSlide(1) }, false);
-        document.getElementById('nextbutt').addEventListener("click", function() { changeSlide(-1) }, false);
-        // set current slide indicator
-        showCurrentSlide();
+        document.getElementById('prevbutt').addEventListener("click", function() { me.changeSlide(1) }, false);
+        document.getElementById('nextbutt').addEventListener("click", function() { me.changeSlide(-1) }, false);
+        // set current/total indicator
+        this.updateSlideCounts();
     }
 }
 
 function changeSlide(dir) {
     // enable/disable prev/next buttons
-    if (dir == -1 && curSlide == 1) { // leaving slide 1
+    if (dir == -1 && this.curSlide == 1) { // leaving fist slide
         document.getElementById('prevbutt').removeAttribute("disabled");
-    } else if (dir == -1 && curSlide == numSlides - 1) { // arriving at last slide
+    } else if (dir == -1 && this.curSlide == this.numSlides - 1) { // arriving at last slide
         document.getElementById('nextbutt').setAttribute("disabled", "true");
-    } else if (dir == 1 &&  curSlide == numSlides) { // leaving last slide
+    } else if (dir == 1 &&  this.curSlide == this.numSlides) { // leaving last slide
         document.getElementById('nextbutt').removeAttribute("disabled");
-    } else if (dir == 1 &&  curSlide == 2) { // arriving at first slide
+    } else if (dir == 1 &&  this.curSlide == 2) { // arriving at first slide
         document.getElementById('prevbutt').setAttribute("disabled", "true");
     }
     // move the filmstrip
-    curSlide += -(dir);
-    oldStripMargin = stripMargin;
-    animateSlideTransition(1, dir, slideWidth);
-    showCurrentSlide();
+    this.curSlide += -(dir);
+    this.oldStripMargin = this.stripMargin;
+    this.updateSlideCounts();
+    this.animateSlideTransition(1, dir, this.slideWidth);
+}
+
+function updateSlideCounts() {
+    document.getElementById('curslide').innerHTML = this.curSlide + '/' + this.numSlides;
 }
 
 // animateSlideTransition
@@ -204,22 +209,19 @@ function changeSlide(dir) {
 function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById("filmstrip");
     if (frame == 7) {
-        stripMargin = oldStripMargin + (slideWidth * dir);
-        strip.style.marginLeft = stripMargin + "em";
+        this.stripMargin = this.oldStripMargin + (this.slideWidth * dir);
+        strip.style.marginLeft = this.stripMargin + "em";
         return;
     }
 
-    var thisMove;
+    var curMove;
     if (frame < 3) {
-        thisMove = dist / 3;
+        curMove = dist / 3;
     } else  {
-        thisMove = dist / 2;
+        curMove = dist / 2;
     }
-    stripMargin += thisMove * dir;
-    strip.style.marginLeft = stripMargin + "em";
-    window.setTimeout(function () { animateSlideTransition(frame + 1, dir, dist - thisMove ) }, 30)
-}
-
-function showCurrentSlide() {
-    document.getElementById('curslide').innerHTML = curSlide + '/' + numSlides;
+    this.stripMargin += curMove * dir;
+    strip.style.marginLeft = this.stripMargin + "em";
+    var me = this;
+    window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
 }
