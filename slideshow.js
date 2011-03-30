@@ -36,7 +36,8 @@
 // elements. Styling should be done on markup included in the slide
 // content itself.
 //
-// You'll also need the following elements somewhere in your HTML:
+// For each slideshow on a page, you'll also need the following
+// markup:
 //
 //   <div id="NAME"></div>
 //   <button id="NAMEprev">Prev</button>
