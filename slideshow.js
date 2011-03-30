@@ -95,15 +95,18 @@
 //-----------------------------------------------------------------------
 
 function slideshow(name, x, y, num) {
-    this.name = name;
-    this.x    = x;
-    this.y    = y;
-    this.numSlides      = num;
-    this.slides         = new Object;
-    this.curSlide       = 1;
-    this.stripMargin    = 0;
-    this.oldStripMargin = 0;
-    this.queuedChanges  = 0;
+    // variables
+    this.name = name;            // slideshow name
+    this.x    = x;               // width
+    this.y    = y;               // height
+    this.count     = num;        // how many slides
+    this.slides    = new Object; // the slides
+    this.current   = 1;          // current slide
+    this.margin    = 0;          // left margin of slidestrip
+    this.oldMargin = 0;          // margin at beginning of animations
+    this.queuedChanges  = 0;     // transitions queued during transition
+    this.isAnimating    = 0;     // currently transitioning?
+    // methods
     this.init              = init;
     this.createCallback    = createCallback;
     this.populateSlideShow = populateSlideShow;
@@ -117,7 +120,7 @@ function init() {
     show.setAttribute('class', 'slideshow');
     show.style.width = this.x + "em";
     show.style.height = this.y + "em";
-    for (var i = 0; i < this.numSlides; i++) {
+    for (var i = 0; i < this.count; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
         if      (i > 999) { leadingZs = '' }  // pretend to be
@@ -150,7 +153,7 @@ function createCallback (slideNum, req) {
 
 function populateSlideShow() {
     var allThere = true; // sentinel for all slides being fetched
-    for (var i = 0; i < this.numSlides; i++) {
+    for (var i = 0; i < this.count; i++) {
         if (this.slides[i] == null) {
             allThere = false;
         }
@@ -165,9 +168,9 @@ function populateSlideShow() {
         var strip = document.createElement('div');
         strip.setAttribute('id', this.name + 'slidestrip');
         strip.setAttribute('class', 'slidestrip');
-        strip.style.width = (this.x * this.numSlides) + "em";
+        strip.style.width = (this.x * this.count) + "em";
         // create slides and populate strip with them
-        for (var i = 0; i < this.numSlides; i++) {
+        for (var i = 0; i < this.count; i++) {
             var slide = document.createElement('div');
             slide.setAttribute("class", "slide");
             slide.style.width = this.x + "em";
@@ -189,34 +192,34 @@ function populateSlideShow() {
 
 function changeSlide(dir) {
     // queue changes when a transition is in progress
-    if (this.animating) {
+    if (this.isAnimating) {
         // unless that change would overrun the bounds of the slideshow
-        if (this.curSlide - this.queuedChanges == 1 || 
-            this.curSlide - this.queuedChanges == this.numSlides) { return }
+        if (this.current - this.queuedChanges == 1 || 
+            this.current - this.queuedChanges == this.count) { return }
         this.queuedChanges += dir;
         return 
     }
     // flag transition as in progress
-    this.animating = true;
+    this.isAnimating = true;
     // enable the appropriate buttons
-    if (dir == -1 && this.curSlide == 1) { // leaving fist slide
+    if (dir == -1 && this.current == 1) { // leaving fist slide
         document.getElementById(this.name + 'prev').removeAttribute("disabled");
-    } else if (dir == -1 && this.curSlide == this.numSlides - 1) { // arriving at last slide
+    } else if (dir == -1 && this.current == this.count - 1) { // arriving at last slide
         document.getElementById(this.name + 'next').setAttribute("disabled", "true");
-    } else if (dir == 1 &&  this.curSlide == this.numSlides) { // leaving last slide
+    } else if (dir == 1 &&  this.current == this.count) { // leaving last slide
         document.getElementById(this.name + 'next').removeAttribute("disabled");
-    } else if (dir == 1 &&  this.curSlide == 2) { // arriving at first slide
+    } else if (dir == 1 &&  this.current == 2) { // arriving at first slide
         document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
     }        
     // move the slidestrip
-    this.curSlide += -(dir);
-    this.oldStripMargin = this.stripMargin;
+    this.current += -(dir);
+    this.oldMargin = this.margin;
     this.updateSlideCounts();
     this.animateSlideTransition(1, dir, this.x);
 }
 
 function updateSlideCounts() {
-    document.getElementById(this.name + 'counts').innerHTML = this.curSlide + '/' + this.numSlides;
+    document.getElementById(this.name + 'counts').innerHTML = this.current + '/' + this.count;
 }
 
 // animateSlideTransition
@@ -240,9 +243,9 @@ function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById(this.name + "slidestrip");
     if (frame == 7) {
         // do final placement
-        this.stripMargin = this.oldStripMargin + (this.x * dir);
-        strip.style.marginLeft = this.stripMargin + "em";
-        this.animating = false;
+        this.margin = this.oldMargin + (this.x * dir);
+        strip.style.marginLeft = this.margin + "em";
+        this.isAnimating = false;
         // handle queued changes
         if (this.queuedChanges != 0) {
             this.queuedChanges -= dir;
@@ -258,8 +261,8 @@ function animateSlideTransition(frame, dir, dist) {
     } else  {
         curMove = dist / 2;
     }
-    this.stripMargin += curMove * dir;
-    strip.style.marginLeft = this.stripMargin + "em";
+    this.margin += curMove * dir;
+    strip.style.marginLeft = this.margin + "em";
     var me = this;
     window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
 }
