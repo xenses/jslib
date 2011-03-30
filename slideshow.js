@@ -187,15 +187,15 @@ function populateSlideShow() {
 }
 
 function changeSlide(dir) {
-    // queue changes
-    if (this.animating) { 
-        // FIXME need to not allow queued changes to exceed hte number
-        // of slides left to flip in the direction we're heading. the
-        // following line is wrong
-        if (Math.abs(self.queuedChanges) == self.numSlides) { return }
+    // queue changes when a transition is in progress
+    if (this.animating) {
+        // unless that change would overrun the bounds of the slideshow
+        if (this.curSlide - this.queuedChanges == 1 || 
+            this.curSlide - this.queuedChanges == this.numSlides) { return }
         this.queuedChanges += dir;
         return 
     }
+    // flag transition as in progress
     this.animating = true;
     // enable the appropriate buttons
     if (dir == -1 && this.curSlide == 1) { // leaving fist slide
