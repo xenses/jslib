@@ -17,13 +17,13 @@
 // "fpslidedecks" is needed. That subdirectory holds additional
 // subdirs, one per slideshow, named after the slideshow.
 //
-// The slides are files in the deck directories. Slides are named
-// slide0000, slide0001, slide0002, and so forth.
+// The slides are files in the deck directories, named slide0000,
+// slide0001, slide0002, and so forth. No extension.
 //
-// The contents of the slide files are shoved into the innerHTML of
-// the slide elements as they are created, so HTML fragments are
-// fine. They should not be complete documents (no <html>, <head>, or
-// <body>).
+// The contents of the slide files are loaded via XMLHttpRequest,
+// slide elements are created, and the slide content is shoved into
+// their innerHTML. So HTML fragments are fine. <html>, <head>, and
+// <body> elements are not.
 //
 // You'll need this CSS in your document/stylesheet:
 //
@@ -43,7 +43,7 @@
 //   <button id="NAMEnext">Next</button>
 //   <span id="NAMEcounts"></span>
 //
-// Where "NAME" is the name you've chosen for the slideshow. The
+// where NAME is the name you've chosen for the slideshow. The
 // elements don't have to be in a particular order, and can be placed
 // as you like.
 //
@@ -54,7 +54,7 @@
 // and then, probably immediately afterward, initialize your slideshow(s)
 //
 //   <script>
-//     var ss = new slideshow('test', 35, 20, 11);
+//     var ss = new slideshow('NAME', 35, 20, 11);
 //     window.addEventListener("DOMContentLoaded", function() { ss.init() });
 //   </script>
 //
