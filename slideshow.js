@@ -56,34 +56,18 @@
 // their innerHTML. So HTML fragments are fine. <html>, <head>, and
 // <body> elements are not.
 //
-// You'll need this CSS in your document/stylesheet:
-//
-//   .slideshow { overflow: hidden; margin: 0; padding: 0; }
-//   .slidestrip { height: 100%; margin: 0; padding: 0; }
-//   .slide { display: inline-block; height: 100%; margin: 0; vertical-align: top; }
-//
-// Adding border, margins, or padding to these classes will definitely
-// create problems, as everything relies upon precise alignment of
-// elements. Styling should be done on markup included in the slide
-// content itself.
-//
-// For each slideshow on a page, you'll also need the following
-// markup:
+// For each slideshow on a page, you need the following markup:
 //
 //   <div id="NAME"></div>
-//   <button id="NAMEprev">Prev</button>
-//   <button id="NAMEnext">Next</button>
-//   <span id="NAMEcounts"></span>
 //
-// where NAME is the name you've chosen for the slideshow. The
-// elements don't have to be in a particular order, and can be placed
-// as you like.
+// where NAME is the name you've chosen for the slideshow. Do not add
+// padding to the slideshow div(s) in your CSS.
 //
-// Finally, in your document, load the script
+// Then, up in the <head>, load the script:
 //
 //   <script src='/path/to/slideshow.js'></script>
 //
-// and then initialize your slideshow(s).
+// And initialize the slideshow(s):
 //
 //   <script>
 //     var ss = new slideshow({'name':'NAME', 'x':35, 'y':20, 'num':10});
@@ -99,6 +83,11 @@
 //
 // Things will break horribly if you don't have all these, though
 // there is no validation yet.
+//
+// Optional arguments:
+//
+//   delay  When present, causes the slideshow to autoadvance one slide
+//          every <delay> ms. Any action by a viewer 
 //
 // Any number of slideshows can be on a single page. Just add more
 // declarations, init() calls, and sets of HTML elements (with NAME
@@ -157,9 +146,14 @@ function slideshow(args) {
 
 function init() {
     var show = document.getElementById(this.name);
-    show.setAttribute('class', 'slideshow');
     show.style.width = this.x + "em";
-    show.style.height = this.y + "em";
+    show.style.height = (this.y + 1.5) + "em";
+    show.style.overflow = "hidden";
+    show.style.margin = 0;
+    show.style.padding = 0;
+
+    // set up keyboard handling
+
     for (var i = 0; i < this.count; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
@@ -204,27 +198,31 @@ function populateSlideShow() {
         window.setTimeout( function() { me.populateSlideShow() }, 50);
     } else {
         // it's all here, then build out the slideshow
+        var show = document.getElementById(this.name);
+        // create control overlay
+        var overlay = buildControlOverlay(this.name);
         // create slidestrip div
         var strip = document.createElement('div');
         strip.setAttribute('id', this.name + 'slidestrip');
-        strip.setAttribute('class', 'slidestrip');
+        strip.style.height = this.y + "em";
         strip.style.width = (this.x * this.count) + "em";
         // create slides and populate strip with them
         for (var i = 0; i < this.count; i++) {
             var slide = document.createElement('div');
-            slide.setAttribute("class", "slide");
             slide.style.width = this.x + "em";
+            slide.style.height = "100%";
+            slide.style.display = "inline-block";
+            slide.style.verticalAlign = "top";
             slide.innerHTML = this.slides[i];
             strip.appendChild(slide);
         }
-        // make strip the child of the slideshow
-        document.getElementById(this.name).appendChild(strip);
-        // turn on buttons
+        // make overlay and strip the child of the slideshow
+        show.appendChild(strip);
+        show.appendChild(overlay);
+        // turn on controls
         var me = this;
-        document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
-        document.getElementById(this.name + 'next').removeAttribute("disabled");
-        document.getElementById(this.name + 'prev').addEventListener("click", function() { me.changeSlide(1) }, false);
-        document.getElementById(this.name + 'next').addEventListener("click", function() { me.changeSlide(-1) }, false);
+        document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
+        document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
         // set current/total indicator
         this.updateSlideCounts();
     }
@@ -242,15 +240,15 @@ function changeSlide(dir) {
     // flag transition as in progress
     this.isAnimating = true;
     // enable the appropriate buttons
-    if (dir == -1 && this.current == 1) { // leaving fist slide
-        document.getElementById(this.name + 'prev').removeAttribute("disabled");
-    } else if (dir == -1 && this.current == this.count - 1) { // arriving at last slide
-        document.getElementById(this.name + 'next').setAttribute("disabled", "true");
-    } else if (dir == 1 &&  this.current == this.count) { // leaving last slide
-        document.getElementById(this.name + 'next').removeAttribute("disabled");
-    } else if (dir == 1 &&  this.current == 2) { // arriving at first slide
-        document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
-    }        
+    //if (dir == -1 && this.current == 1) { // leaving fist slide
+    //    document.getElementById(this.name + 'prev').removeAttribute("disabled");
+    //} else if (dir == -1 && this.current == this.count - 1) { // arriving at last slide
+    //    document.getElementById(this.name + 'next').setAttribute("disabled", "true");
+    //} else if (dir == 1 &&  this.current == this.count) { // leaving last slide
+    //    document.getElementById(this.name + 'next').removeAttribute("disabled");
+    //} else if (dir == 1 &&  this.current == 2) { // arriving at first slide
+    //    document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
+    //}        
     // move the slidestrip
     this.current += -(dir);
     this.oldMargin = this.margin;
@@ -259,7 +257,7 @@ function changeSlide(dir) {
 }
 
 function updateSlideCounts() {
-    document.getElementById(this.name + 'counts').innerHTML = this.current + '/' + this.count;
+    document.getElementById(this.name + 'ctrlcm').innerHTML = this.current + '/' + this.count;
 }
 
 // animateSlideTransition
@@ -305,4 +303,69 @@ function animateSlideTransition(frame, dir, dist) {
     strip.style.marginLeft = this.margin + "em";
     var me = this;
     window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
+}
+
+function buildControlOverlay(name) {
+    var ol = document.createElement('div');
+    ol.setAttribute("id", name + "ctrl");
+    ol.style.width = this.x + 'em';
+    ol.style.height = '1.2em';
+    ol.style.color = '#ddd';
+    ol.style.padding = 0
+    ol.style.backgroundColor = '#555';
+    ol.style.fontFamily = 'sans-serif';
+    ol.style.fontSize = '1.2em';
+    ol.style.cursor = "default";
+    // left arrow block
+    var lab = document.createElement('div');
+    lab.setAttribute("id", name + "ctrlp");
+    lab.style.display = 'inline-block';
+    lab.style.width = "20%";
+    lab.style.textAlign = "center";
+    lab.style.borderRight = "solid thin #ddd"
+    lab.innerHTML = "&lArr;";
+    lab.addEventListener("mousedown",
+                         function() { lab.style.color = "#fff"; lab.style.backgroundColor = "#666" });
+    lab.addEventListener("mouseup",
+                         function() { lab.style.color = "#ddd"; lab.style.backgroundColor = "#555" });
+    // right arrow block
+    var rab = document.createElement('div');
+    rab.setAttribute("id", name + "ctrln");
+    rab.style.display = 'inline-block';
+    rab.style.width = "20%";
+    rab.style.textAlign = "center";
+    rab.style.borderLeft = "solid thin #ddd"
+    rab.style.khtmlUserSelect = "none";
+    rab.innerHTML = "&rArr;";
+    rab.addEventListener("mousedown",
+                         function() { rab.style.color = "#fff"; rab.style.backgroundColor = "#666" });
+    rab.addEventListener("mouseup",
+                         function() { rab.style.color = "#ddd"; rab.style.backgroundColor = "#555" });
+    // center block
+    var cb = document.createElement('div');
+    cb.setAttribute("id", name + "ctrlc");
+    cb.style.display = 'inline-block';
+    cb.style.width = "59%";
+    cb.style.textAlign = "center";
+    var cbm = document.createElement('div');
+    cbm.setAttribute("id", name + "ctrlcm");
+    cbm.style.display = 'inline-block';
+    cbm.style.width = "95%";
+    cbm.style.textAlign = "center";
+    var cbh = document.createElement('div');
+    cbh.setAttribute("id", name + "ctrlch");
+    cbh.style.display = 'inline-block';
+    cbh.style.fontSize = "small";
+    cbh.style.padding = "2px";
+    cbh.style.width = "4%";
+    cbh.style.color = "#fd7";
+    cbh.style.verticalAlign = "middle";
+    cbh.innerHTML = "?"
+    cb.appendChild(cbm);
+    cb.appendChild(cbh);
+    // put it all together
+    ol.appendChild(lab);
+    ol.appendChild(cb);
+    ol.appendChild(rab);
+    return ol;
 }
