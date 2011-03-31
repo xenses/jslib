@@ -2,6 +2,7 @@
 // v1.3.2 - 29 Mar 2011
 //
 // A basic Javascript slideshow in-an-object.
+// Skip below license for usage docs.
 //
 // Copyright (c) 2011, Shawn Boyette <shawn@firepear.net>
 // All rights reserved.
@@ -82,16 +83,22 @@
 //
 //   <script src='/path/to/slideshow.js'></script>
 //
-// and then, probably immediately afterward, initialize your slideshow(s)
+// and then initialize your slideshow(s).
 //
 //   <script>
-//     var ss = new slideshow('NAME', 35, 20, 11);
+//     var ss = new slideshow({'name':'NAME', 'x':35, 'y':20, 'num':10});
 //     window.addEventListener("DOMContentLoaded", function() { ss.init() });
 //   </script>
 //
-// The arguments to slideshow() are: the name of the slideshow, its
-// width (in ems), height (in ems), and the number of slides in the
-// deck.
+// The required arguments to the constructor are:
+//
+//   name  Name of the slideshow
+//   x     Width, in ems
+//   y     Height, in ems
+//   num   Number of slides
+//
+// Things will break horribly if you don't have all these, though
+// there is no validation yet.
 //
 // Any number of slideshows can be on a single page. Just add more
 // declarations, init() calls, and sets of HTML elements (with NAME
@@ -100,6 +107,9 @@
 //-----------------------------------------------------------------------
 
 // CHANGELOG
+//
+// 1.3.3 Change constructor args to single obj for pseudo-named
+//       arguments
 //
 // 1.3.2 Queue slide changes while slides are changing
 //
@@ -124,12 +134,12 @@
 
 //-----------------------------------------------------------------------
 
-function slideshow(name, x, y, num) {
+function slideshow(args) {
     // variables
-    this.name = name;            // slideshow name
-    this.x    = x;               // width
-    this.y    = y;               // height
-    this.count     = num;        // how many slides
+    this.name = args.name;       // slideshow name
+    this.x    = args.x;          // width
+    this.y    = args.y;          // height
+    this.count     = args.num;   // how many slides
     this.slides    = new Object; // the slides
     this.current   = 1;          // current slide
     this.margin    = 0;          // left margin of slidestrip
