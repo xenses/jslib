@@ -142,18 +142,15 @@ function slideshow(args) {
     this.changeSlide       = changeSlide;
     this.updateSlideCounts = updateSlideCounts;
     this.animateSlideTransition = animateSlideTransition;
+    this.fadeIn = fadeIn;
+    this.fadeOut = fadeOut;
+    this.buildSlideshowContainer = buildSlideshowContainer;
+    this.buildControlOverlay     = buildControlOverlay;
 }
 
 function init() {
-    var show = document.getElementById(this.name);
-    show.style.width = this.x + "em";
-    show.style.height = (this.y + 1.5) + "em";
-    show.style.overflow = "hidden";
-    show.style.margin = 0;
-    show.style.padding = 0;
-
-    // set up keyboard handling
-
+    var me = this;
+    this.buildSlideshowContainer();
     for (var i = 0; i < this.count; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
@@ -197,18 +194,12 @@ function populateSlideShow() {
         var me = this;
         window.setTimeout( function() { me.populateSlideShow() }, 50);
     } else {
-        // it's all here, then build out the slideshow
-        var show = document.getElementById(this.name);
-        // create control overlay
-        var overlay = buildControlOverlay(this.name);
-        // create slidestrip div
-        var strip = document.createElement('div');
-        strip.setAttribute('id', this.name + 'slidestrip');
-        strip.style.height = this.y + "em";
-        strip.style.width = (this.x * this.count) + "em";
+        // it's all here, then build the slides
+        var strip = document.getElementById(this.name + 'slidestrip');
         // create slides and populate strip with them
         for (var i = 0; i < this.count; i++) {
             var slide = document.createElement('div');
+            slide.setAttribute('id', this.name + 'slide' + i);
             slide.style.width = this.x + "em";
             slide.style.height = "100%";
             slide.style.display = "inline-block";
@@ -216,13 +207,6 @@ function populateSlideShow() {
             slide.innerHTML = this.slides[i];
             strip.appendChild(slide);
         }
-        // make overlay and strip the child of the slideshow
-        show.appendChild(strip);
-        show.appendChild(overlay);
-        // turn on controls
-        var me = this;
-        document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
-        document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
         // set current/total indicator
         this.updateSlideCounts();
     }
@@ -259,6 +243,8 @@ function changeSlide(dir) {
 function updateSlideCounts() {
     document.getElementById(this.name + 'ctrlcm').innerHTML = this.current + '/' + this.count;
 }
+
+//-----------------------------------------------------------------------
 
 // animateSlideTransition
 //
@@ -305,61 +291,128 @@ function animateSlideTransition(frame, dir, dist) {
     window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
 }
 
-function buildControlOverlay(name) {
+function fadeOut(elem, frame) {
+    var re = new RegExp('^' + this.name);
+    if (window.event && window.event != null && re.test(window.event.relatedTarget.id)) { return }
+    if (this.faderTimeout) {
+        window.clearTimeout(this.faderTimeout);
+        this.faderTimeout = undefined;
+    }
+    if (frame == 6) {
+        elem.style.opacity = 0;
+        this.faderTimeout = null;
+        return;
+    }
+    var me = this;
+    elem.style.opacity = elem.style.opacity / 3;
+    this.faderTimeout = window.setTimeout(function () { me.fadeOut(elem, frame + 1) }, 20)
+}
+
+function fadeIn(elem, frame) {
+    if (window.event && window.event != null && window.event.relatedTarget.tagName != "BODY") { return }
+    if (this.faderTimeout) {
+        window.clearTimeout(this.faderTimeout);
+        this.faderTimeout = undefined;
+    }
+    if (frame == 6) {
+        elem.style.opacity = 1;
+        this.faderTimeout = null;
+        return;
+    }
+    if (frame == 1) {
+        elem.style.opacity = 0.125;
+    } else {        
+        elem.style.opacity = elem.style.opacity * 1.5;
+    }
+    var me = this;
+    this.faderTimeout = window.setTimeout(function () { me.fadeIn(elem, frame + 1) }, 20)
+}
+
+//-----------------------------------------------------------------------
+
+function buildSlideshowContainer() {
+    var show = document.getElementById(this.name);
+    show.style.width = this.x + "em";
+    show.style.height = this.y + "em";
+    show.style.overflow = "hidden";
+    show.style.margin = 0;
+    show.style.padding = 0;
+    show.style.outline = 0;
+    show.setAttribute("tabindex", -1);
+    // set up keyboard handling
+    show.addEventListener("click", function() {show.focus() });
+    //show.addEventListener('keydown', function() { alert(obj.name + ' ' + window.event.keyCode) });
+    // create slidestrip
+    var strip = document.createElement('div');
+    strip.setAttribute('id', this.name + 'slidestrip');
+    strip.style.height = this.y + "em";
+    strip.style.width = (this.x * this.count) + "em";
+    show.appendChild(strip);
+    // create controls
+    var ctrl = this.buildControlOverlay();
+    show.appendChild(ctrl);
+    // turn on controls
+    var me = this;
+    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
+    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
+    // set up controls fade in/out
+    show.addEventListener("mouseover", function() { me.fadeIn(ctrl, 1) });
+    show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) });
+    // finish
+    return show
+}
+
+function buildControlOverlay() {
     var ol = document.createElement('div');
-    ol.setAttribute("id", name + "ctrl");
+    ol.setAttribute("id", this.name + "ctrl");
     ol.style.width = this.x + 'em';
-    ol.style.height = '1.2em';
+    ol.style.position = "relative";
+    ol.style.top = "-3.5em";
     ol.style.color = '#ddd';
-    ol.style.padding = 0
     ol.style.backgroundColor = '#555';
     ol.style.fontFamily = 'sans-serif';
-    ol.style.fontSize = '1.2em';
     ol.style.cursor = "default";
+    ol.style.opacity = 0;
     // left arrow block
     var lab = document.createElement('div');
-    lab.setAttribute("id", name + "ctrlp");
+    lab.setAttribute("id", this.name + "ctrlp");
     lab.style.display = 'inline-block';
     lab.style.width = "20%";
     lab.style.textAlign = "center";
     lab.style.borderRight = "solid thin #ddd"
-    lab.innerHTML = "&lArr;";
+    lab.innerHTML = "&lArr; Prev";
     lab.addEventListener("mousedown",
                          function() { lab.style.color = "#fff"; lab.style.backgroundColor = "#666" });
     lab.addEventListener("mouseup",
                          function() { lab.style.color = "#ddd"; lab.style.backgroundColor = "#555" });
     // right arrow block
     var rab = document.createElement('div');
-    rab.setAttribute("id", name + "ctrln");
+    rab.setAttribute("id", this.name + "ctrln");
     rab.style.display = 'inline-block';
     rab.style.width = "20%";
     rab.style.textAlign = "center";
     rab.style.borderLeft = "solid thin #ddd"
     rab.style.khtmlUserSelect = "none";
-    rab.innerHTML = "&rArr;";
+    rab.innerHTML = "Next &rArr;";
     rab.addEventListener("mousedown",
                          function() { rab.style.color = "#fff"; rab.style.backgroundColor = "#666" });
     rab.addEventListener("mouseup",
                          function() { rab.style.color = "#ddd"; rab.style.backgroundColor = "#555" });
     // center block
     var cb = document.createElement('div');
-    cb.setAttribute("id", name + "ctrlc");
+    cb.setAttribute("id", this.name + "ctrlc");
     cb.style.display = 'inline-block';
     cb.style.width = "59%";
-    cb.style.textAlign = "center";
     var cbm = document.createElement('div');
-    cbm.setAttribute("id", name + "ctrlcm");
+    cbm.setAttribute("id", this.name + "ctrlcm");
     cbm.style.display = 'inline-block';
-    cbm.style.width = "95%";
-    cbm.style.textAlign = "center";
+    cbm.style.width = "89%";
+    cbm.style.paddingLeft = "3px";
     var cbh = document.createElement('div');
-    cbh.setAttribute("id", name + "ctrlch");
+    cbh.setAttribute("id", this.name + "ctrlch");
     cbh.style.display = 'inline-block';
-    cbh.style.fontSize = "small";
-    cbh.style.padding = "2px";
-    cbh.style.width = "4%";
-    cbh.style.color = "#fd7";
-    cbh.style.verticalAlign = "middle";
+    cbh.style.width = "9%";
+    cbh.style.color = "#fd9";
     cbh.innerHTML = "?"
     cb.appendChild(cbm);
     cb.appendChild(cbh);
