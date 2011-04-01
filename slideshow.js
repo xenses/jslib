@@ -95,6 +95,13 @@
 
 //-----------------------------------------------------------------------
 
+// TODO
+//
+// raise/bury controls when they are fading in/out to prevent
+// obscuring links in slides
+
+//-----------------------------------------------------------------------
+
 function slideshow(args) {
     // variables
     this.name = args.name;       // slideshow name
@@ -261,8 +268,8 @@ function animateSlideTransition(frame, dir, dist) {
 }
 
 function fadeOut(elem, frame) {
-    var re = new RegExp('^' + this.name);
-    if (window.event && window.event != null && re.test(window.event.relatedTarget.id)) { return }
+    if (window.event && window.event != null &&
+        (window.event.relatedTarget.tagName != "BODY" && window.event.relatedTarget.tagName != "HTML")) { return }
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
@@ -278,7 +285,8 @@ function fadeOut(elem, frame) {
 }
 
 function fadeIn(elem, frame) {
-    if (window.event && window.event != null && window.event.relatedTarget.tagName != "BODY") { return }
+    if (window.event && window.event != null &&
+        (window.event.relatedTarget.tagName != "BODY" && window.event.relatedTarget.tagName != "HTML")) { return }
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
