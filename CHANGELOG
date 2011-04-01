@@ -1,0 +1,37 @@
+CHANGELOG
+
+// slideshow
+
+1.4.0 All mandatory external CSS eliminated
+
+      HTML except slideshow div eliminated
+
+      In-slideshow controls implemented
+
+      Controls fade in/out on mousing
+
+      Keyboard nav controls implemented
+
+1.3.3 Change constructor args to single obj for pseudo-named
+      arguments
+
+1.3.2 Queue slide changes while slides are changing
+
+1.3.1 Prevent slide change while slide is changing
+
+1.3.0 Allow multiple decks per page
+
+1.2.0 Objectified
+
+1.1.4 Parameterized initialization, allowing for multiple decks
+      without copying and editing the source file (hurp)
+
+1.1.3 Changed slide deck directory name and slide naming scheme
+
+1.1.2 Condensed variable declarations
+
+1.1.1 Made control variable and button initialization more reliable
+
+1.1.0 Added transition animation
+
+1.0.1 Added showCurrentSlide
