@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.3.2 - 29 Mar 2011
+// v1.4.0 - 29 Mar 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Skip below license for usage docs.
@@ -99,6 +99,10 @@
 //
 // raise/bury controls when they are fading in/out to prevent
 // obscuring links in slides
+//
+// jump-to-slide
+//
+// implement delay
 
 //-----------------------------------------------------------------------
 
