@@ -185,6 +185,9 @@ function populateSlideShow() {
 }
 
 function changeSlide(dir) {
+    // don't roll off ends
+    if ((dir == 1 && this.current == 1) ||
+        (dir == -1 && this.current == this.count)) { return }
     // queue changes when a transition is in progress
     if (this.isAnimating) {
         // unless that change would overrun the bounds of the slideshow
@@ -195,16 +198,6 @@ function changeSlide(dir) {
     }
     // flag transition as in progress
     this.isAnimating = true;
-    // enable the appropriate buttons
-    //if (dir == -1 && this.current == 1) { // leaving fist slide
-    //    document.getElementById(this.name + 'prev').removeAttribute("disabled");
-    //} else if (dir == -1 && this.current == this.count - 1) { // arriving at last slide
-    //    document.getElementById(this.name + 'next').setAttribute("disabled", "true");
-    //} else if (dir == 1 &&  this.current == this.count) { // leaving last slide
-    //    document.getElementById(this.name + 'next').removeAttribute("disabled");
-    //} else if (dir == 1 &&  this.current == 2) { // arriving at first slide
-    //    document.getElementById(this.name + 'prev').setAttribute("disabled", "true");
-    //}        
     // move the slidestrip
     this.current += -(dir);
     this.oldMargin = this.margin;
