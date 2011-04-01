@@ -112,12 +112,14 @@ function slideshow(args) {
     this.createCallback    = createCallback;
     this.populateSlideShow = populateSlideShow;
     this.changeSlide       = changeSlide;
+    this.keyDispatch       = keyDispatch;
     this.updateSlideCounts = updateSlideCounts;
     this.animateSlideTransition = animateSlideTransition;
     this.fadeIn = fadeIn;
     this.fadeOut = fadeOut;
     this.buildSlideshowContainer = buildSlideshowContainer;
     this.buildControlOverlay     = buildControlOverlay;
+    this.buildHelpFrame          = buildHelpFrame;
 }
 
 function init() {
@@ -206,7 +208,9 @@ function changeSlide(dir) {
 }
 
 function updateSlideCounts() {
-    document.getElementById(this.name + 'ctrlcm').innerHTML = this.current + '/' + this.count;
+    var count = this.current + '/' + this.count;
+    document.getElementById(this.name + 'ctrlcm').innerHTML = count;
+    document.getElementById(this.name + 'kdsi').innerHTML = count;
 }
 
 //-----------------------------------------------------------------------
@@ -295,7 +299,26 @@ function fadeIn(elem, frame) {
 
 //-----------------------------------------------------------------------
 
+function keyDispatch() {
+    var k = window.event.keyCode;
+
+    if      (k == 37) { this.changeSlide(1) }
+    else if (k == 39) { this.changeSlide(-1) }
+
+    var me = this;
+    var kdsi = document.getElementById(this.name + 'kdsi');
+    if (this.kdsiTimeout) {
+        window.clearTimeout(this.kdsiTimeout);
+        this.kdsiTimeout = undefined;
+    }
+    kdsi.style.opacity = 1;
+    this.kdsiTimeout = window.setTimeout(function() {me.fadeOut(kdsi, 1) }, 500);
+}
+
+//-----------------------------------------------------------------------
+
 function buildSlideshowContainer() {
+    var me = this;
     var show = document.getElementById(this.name);
     show.style.width = this.x + "em";
     show.style.height = this.y + "em";
@@ -304,9 +327,6 @@ function buildSlideshowContainer() {
     show.style.padding = 0;
     show.style.outline = 0;
     show.setAttribute("tabindex", -1);
-    // set up keyboard handling
-    show.addEventListener("click", function() {show.focus() });
-    //show.addEventListener('keydown', function() { alert(obj.name + ' ' + window.event.keyCode) });
     // create slidestrip
     var strip = document.createElement('div');
     strip.setAttribute('id', this.name + 'slidestrip');
@@ -316,6 +336,21 @@ function buildSlideshowContainer() {
     // create controls
     var ctrl = this.buildControlOverlay();
     show.appendChild(ctrl);
+    // create key-driven slide indicator
+    var kdsi = document.createElement('div');
+    kdsi.setAttribute('id', this.name + 'kdsi');
+    kdsi.style.width = "5em";
+    kdsi.style.position = "relative";
+    kdsi.style.left = (this.x - 6) + "em";
+    kdsi.style.top = "-" + (this.y + 1) + "em";
+    kdsi.style.backgroundColor = "#555";
+    kdsi.style.color = "#ddd";
+    kdsi.style.textAlign = "center";
+    kdsi.style.padding = "3px";
+    kdsi.style.opacity = 0;
+    kdsi.style.border = "solid thin #ddd";
+    kdsi.style.borderRadius = "0.5em";
+    show.appendChild(kdsi);
     // turn on controls
     var me = this;
     document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
@@ -323,6 +358,9 @@ function buildSlideshowContainer() {
     // set up controls fade in/out
     show.addEventListener("mouseover", function() { me.fadeIn(ctrl, 1) });
     show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) });
+    // set up keyboard handling
+    show.addEventListener("click", function() {show.focus() });
+    show.addEventListener('keydown', function() { me.keyDispatch() });
     // finish
     return show
 }
@@ -335,6 +373,8 @@ function buildControlOverlay() {
     ol.style.top = "-3.5em";
     ol.style.color = '#ddd';
     ol.style.backgroundColor = '#555';
+    ol.style.borderTop = 'solid thin #555';
+    ol.style.borderBottom = 'solid thin #555';
     ol.style.fontFamily = 'sans-serif';
     ol.style.cursor = "default";
     ol.style.opacity = 0;
@@ -377,8 +417,8 @@ function buildControlOverlay() {
     cbh.setAttribute("id", this.name + "ctrlch");
     cbh.style.display = 'inline-block';
     cbh.style.width = "9%";
-    cbh.style.color = "#fd9";
     cbh.innerHTML = "?"
+    cbh.addEventListener('click', buildHelpFrame);
     cb.appendChild(cbm);
     cb.appendChild(cbh);
     // put it all together
@@ -386,4 +426,8 @@ function buildControlOverlay() {
     ol.appendChild(cb);
     ol.appendChild(rab);
     return ol;
+}
+
+function buildHelpFrame() {
+    alert("Apologies for the shittiness of this dialog. It'll be better soon.\n\nYou already found the mouse controls, but they cover up slide content. Click anywhere in slideshow to give keyboard focus (which you just did), then:\n\nLeft   Previous slide\nRight  Next slide\nUp     First slide\nDown   Last slide");
 }
