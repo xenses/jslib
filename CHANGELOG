@@ -2,6 +2,8 @@ CHANGELOG
 
 // slideshow
 
+1.4.1 'outline' constructor argument added
+
 1.4.0 All mandatory external CSS eliminated
 
       HTML except slideshow div eliminated
