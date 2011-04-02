@@ -319,7 +319,7 @@ function fadeIn(elem, frame) {
 //-----------------------------------------------------------------------
 
 function keyDispatch(e) {
-    var event = e || window.event;
+    var event = window.event || e;
     var k = event.keyCode;
 
     if      (k == 37) { this.changeSlide(1) }
@@ -380,7 +380,7 @@ function buildSlideshowContainer() {
     show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) }, false);
     // set up keyboard handling
     show.addEventListener("click", function() {show.focus() }, false);
-    show.addEventListener('keypress', function(event) { me.keyDispatch(event) }, false);
+    show.addEventListener('keydown', function(event) { me.keyDispatch(event) }, false);
     // finish
     return show
 }
