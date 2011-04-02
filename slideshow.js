@@ -338,7 +338,7 @@ function keyDispatch(ev) {
         this.kdsiTimeout = undefined;
     }
     kdsi.style.opacity = 1;
-    this.kdsiTimeout = window.setTimeout(function() {null, me.fadeOut(kdsi, 1) }, 500);
+    this.kdsiTimeout = window.setTimeout(function() {me.fadeOut(null, kdsi, 1) }, 500);
 }
 
 //-----------------------------------------------------------------------
