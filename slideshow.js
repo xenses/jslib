@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.0 - 29 Mar 2011
+// v1.4.1 - 29 Mar 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Skip below license for usage docs.
@@ -370,8 +370,14 @@ function buildSlideshowContainer() {
     show.style.overflow = "hidden";
     show.style.margin = 0;
     show.style.padding = 0;
-    show.style.outlineColor = "#dde";
     show.setAttribute("tabindex", -1);
+    if (this.conf.outline != undefined) {
+        if (this.conf.outline) {
+            show.style.outlineColor = this.conf.outline;
+        } else {
+            show.style.outline = 0;
+        }
+    }
     // create slidestrip
     var strip = document.createElement('div');
     strip.setAttribute('id', this.name + 'slidestrip');
