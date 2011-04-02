@@ -278,9 +278,12 @@ function animateSlideTransition(frame, dir, dist) {
     window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
 }
 
-function fadeOut(elem, frame) {
-    if (window.event && window.event != null &&
-        (window.event.relatedTarget.tagName != "BODY" && window.event.relatedTarget.tagName != "HTML")) { return }
+function fadeOut(ev, elem, frame) {
+    var event = window.event || ev;
+    if (event && event != null) {
+        if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
+    }
+
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
@@ -292,12 +295,15 @@ function fadeOut(elem, frame) {
     }
     var me = this;
     elem.style.opacity = elem.style.opacity / 2;
-    this.faderTimeout = window.setTimeout(function () { me.fadeOut(elem, frame + 1) }, 20)
+    this.faderTimeout = window.setTimeout(function () { me.fadeOut(null, elem, frame + 1) }, 20)
 }
 
-function fadeIn(elem, frame) {
-    if (window.event && window.event != null &&
-        (window.event.relatedTarget.tagName != "BODY" && window.event.relatedTarget.tagName != "HTML")) { return }
+function fadeIn(ev, elem, frame) {
+    var event = window.event || ev;
+    if (event && event != null) {
+        if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
+    }
+
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
@@ -313,13 +319,13 @@ function fadeIn(elem, frame) {
         elem.style.opacity = elem.style.opacity * 1.5;
     }
     var me = this;
-    this.faderTimeout = window.setTimeout(function () { me.fadeIn(elem, frame + 1) }, 20)
+    this.faderTimeout = window.setTimeout(function () { me.fadeIn(null, elem, frame + 1) }, 20)
 }
 
 //-----------------------------------------------------------------------
 
-function keyDispatch(e) {
-    var event = window.event || e;
+function keyDispatch(ev) {
+    var event = window.event || ev;
     var k = event.keyCode;
 
     if      (k == 37) { this.changeSlide(1) }
@@ -376,8 +382,8 @@ function buildSlideshowContainer() {
     document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
     document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
     // set up controls fade in/out
-    show.addEventListener("mouseover", function() { me.fadeIn(ctrl, 1) }, false);
-    show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) }, false);
+    show.addEventListener("mouseover", function(event) { me.fadeIn(event, ctrl, 1) }, false);
+    show.addEventListener("mouseout", function(event) { me.fadeOut(event, ctrl, 1) }, false);
     // set up keyboard handling
     show.addEventListener("click", function() {show.focus() }, false);
     show.addEventListener('keydown', function(event) { me.keyDispatch(event) }, false);
