@@ -227,23 +227,35 @@ function populateSlideShow() {
 
 function shiftOneSlide(dir) {
     // don't roll off ends
-    if ((dir == 1 && this.current == 1) ||
-        (dir == -1 && this.current == this.count)) { return }
+    if ((dir == "prev" && this.current == 1) ||
+        (dir == "next" && this.current == this.count)) { return }
+    this.moveSlidestrip(dir, 1)
+}
+
+function jumpToSlide(slide) {
+    // no out-of-bounds and switching to current is a no-op
+    if (slide < 1 || slide > this.count) return;
+    if (slide == this.current) return;
+    var dir = (slide > this.current) ? "next" : "prev";
+}
+
+function moveSlidestrip(dir, dist) {
+    pn = (dir == "prev") ? 1 : -1;
     // queue changes when a transition is in progress
     if (this.isAnimating) {
         // unless that change would overrun the bounds of the slideshow
         if (this.current - this.queuedChanges == 1 || 
             this.current - this.queuedChanges == this.count) { return }
-        this.queuedChanges += dir;
+        this.queuedChanges += pn;
         return 
     }
     // flag transition as in progress
     this.isAnimating = true;
     // move the slidestrip
-    this.current += -(dir);
+    this.current += -(pn);
     this.oldMargin = this.margin;
     this.updateSlideCounts();
-    this.animateSlideTransition(1, dir, this.x);
+    this.animateSlideTransition(1, pn, dist);
 }
 
 function updateSlideCounts() {
@@ -349,8 +361,8 @@ function keyDispatch(ev) {
     var event = window.event || ev;
     var k = event.keyCode;
 
-    if      (k == 37) { this.shiftOneSlide(1) }
-    else if (k == 39) { this.shiftOneSlide(-1) }
+    if      (k == 37) { this.shiftOneSlide("prev") }
+    else if (k == 39) { this.shiftOneSlide("next") }
 
     var me = this;
     var kdsi = document.getElementById(this.name + 'kdsi');
@@ -406,8 +418,8 @@ function buildSlideshowContainer() {
     show.appendChild(kdsi);
     // turn on controls
     var me = this;
-    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.shiftOneSlide(1) }, false);
-    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.shiftOneSlide(-1) }, false);
+    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.shiftOneSlide("prev") }, false);
+    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.shiftOneSlide("next") }, false);
     // set up controls fade in/out
     show.addEventListener("mouseover", function(event) { me.fadeIn(event, ctrl, 1) }, false);
     show.addEventListener("mouseout", function(event) { me.fadeOut(event, ctrl, 1) }, false);
