@@ -56,49 +56,66 @@
 // their innerHTML. So HTML fragments are fine. <html>, <head>, and
 // <body> elements are not.
 //
-// Embedding on page
-// -----------------
+// Setting up slideshows
+// ---------------------
 // For each slideshow on a page, you need the following markup:
 //
 //   <div id="NAME"></div>
 //
-// where NAME is the name you've chosen for the slideshow. Do not add
-// padding to the slideshow div(s) in your CSS.
+// where NAME is the name you've chosen for the slideshow.
 //
-// Then, up in the <head>, load the script:
+// Load the script:
 //
 //   <script src='/path/to/slideshow.js'></script>
 //
 // And initialize the slideshow(s):
 //
 //   <script>
+//     // repeat these lines for each slideshow you want to have
 //     var ss = new slideshow({'name':'NAME', 'x':35, 'y':20, 'num':10});
-//     window.addEventListener("DOMContentLoaded", function() { ss.init() });
+//     window.addEventListener("DOMContentLoaded", function() { ss.init() }, false);
 //   </script>
 //
 // The required arguments to the constructor are:
 //
-//   name  Name of the slideshow
+//   name  Slideshow name; should match one of your divs
 //   x     Width, in ems
 //   y     Height, in ems
 //   num   Number of slides
 //
-// Things will break horribly if you don't have all these, though
-// there is no validation yet.
+// Things will break horribly if you don't have all these.  There is
+// no argument validation yet.
 //
-// Optional arguments:
+// The constructor also has optional arguments:
 //
-//   delay  When present, causes the slideshow to autoadvance one slide
-//          every <delay> ms. Any action by a viewer 
+//   outline  If defined and *true*, it will be used to set the color
+//            of the focus outline of the slideshow. If defined and
+//            *false*, the slideshow's outline will be turned off. If
+//            undefined, the outline will be left as the user-agent
+//            default.
+//
+//   delay  When defined, causes the slideshow to autoadvance one slide
+//          every <delay> ms. Any action by a viewer will turn off the
+//          autoadvance behavior.
 //
 // Any number of slideshows can be on a single page. Just add more
 // declarations, init() calls, and sets of HTML elements (with NAME
 // changed appropriately).
 //
-// Styling
-// -------
+// Styling slideshows
+// ------------------
 //
-// 
+// Do not add padding or margins to the slideshow divs you
+// define. Borders are okay.
+//
+// Individual slides all have the class '.slide', which can be use as
+// a selector for targetting styles on slides. Almost any styling
+// should be okay on individual slides.
+//
+// Be aware that the entire slideshow is set to 'overflow: hidden', so
+// content must fit the slides. Slide size is inherited from the
+// slideshow, and should not be manipulated -- slide transitions
+// depend on precise alignment of the slides themselves.
 
 //-----------------------------------------------------------------------
 
@@ -114,11 +131,13 @@
 //-----------------------------------------------------------------------
 
 function slideshow(args) {
-    // variables
-    this.name = args.name;       // slideshow name
-    this.x    = args.x;          // width
-    this.y    = args.y;          // height
-    this.count     = args.num;   // how many slides
+    // constructor call variables
+    this.name  = args.name;  // slideshow name
+    this.x     = args.x;     // width
+    this.y     = args.y;     // height
+    this.count = args.num;   // how many slides
+    this.conf  = args        // stow args as configuration
+    // initialization variables
     this.slides    = new Object; // the slides
     this.current   = 1;          // current slide
     this.margin    = 0;          // left margin of slidestrip
@@ -133,7 +152,7 @@ function slideshow(args) {
     this.keyDispatch       = keyDispatch;
     this.updateSlideCounts = updateSlideCounts;
     this.animateSlideTransition = animateSlideTransition;
-    this.fadeIn = fadeIn;
+    this.fadeIn  = fadeIn;
     this.fadeOut = fadeOut;
     this.buildSlideshowContainer = buildSlideshowContainer;
     this.buildControlOverlay     = buildControlOverlay;
@@ -351,7 +370,7 @@ function buildSlideshowContainer() {
     show.style.overflow = "hidden";
     show.style.margin = 0;
     show.style.padding = 0;
-    show.style.outline = 0;
+    show.style.outlineColor = "#dde";
     show.setAttribute("tabindex", -1);
     // create slidestrip
     var strip = document.createElement('div');
