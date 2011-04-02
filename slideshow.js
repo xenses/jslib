@@ -1,10 +1,12 @@
 // slideshow.js
-// v1.4.1 - 29 Mar 2011
+// v1.4.1 - 02 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
-// Skip below license for usage docs.
-//
-// Copyright (c) 2011, Shawn Boyette <shawn@firepear.net>
+// Usage docs follow license
+
+//-----------------------------------------------------------------------
+
+// Copyright (c) 2011, Shawn Boyette, Firepear Informatics
 // All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
@@ -19,7 +21,7 @@
 //   the documentation and/or other materials provided with the
 //   distribution.
 //
-// * Neither the name of the <ORGANIZATION> nor the names of its
+// * Neither the name of Firepear Informatics nor the names of its
 //   contributors may be used to endorse or promote products derived
 //   from this software without specific prior written permission.
 //
@@ -148,7 +150,7 @@ function slideshow(args) {
     this.init              = init;
     this.createCallback    = createCallback;
     this.populateSlideShow = populateSlideShow;
-    this.changeSlide       = changeSlide;
+    this.shiftOneSlide     = shiftOneSlide;
     this.keyDispatch       = keyDispatch;
     this.updateSlideCounts = updateSlideCounts;
     this.animateSlideTransition = animateSlideTransition;
@@ -223,7 +225,7 @@ function populateSlideShow() {
     }
 }
 
-function changeSlide(dir) {
+function shiftOneSlide(dir) {
     // don't roll off ends
     if ((dir == 1 && this.current == 1) ||
         (dir == -1 && this.current == this.count)) { return }
@@ -279,8 +281,8 @@ function animateSlideTransition(frame, dir, dist) {
         // handle queued changes
         if (this.queuedChanges != 0) {
             this.queuedChanges -= dir;
-            if (dir > 0) { this.changeSlide(1)  }
-            else         { this.changeSlide(-1) }
+            if (dir > 0) { this.shiftOneSlide(1)  }
+            else         { this.shiftOneSlide(-1) }
         }
         return;
     }
@@ -347,8 +349,8 @@ function keyDispatch(ev) {
     var event = window.event || ev;
     var k = event.keyCode;
 
-    if      (k == 37) { this.changeSlide(1) }
-    else if (k == 39) { this.changeSlide(-1) }
+    if      (k == 37) { this.shiftOneSlide(1) }
+    else if (k == 39) { this.shiftOneSlide(-1) }
 
     var me = this;
     var kdsi = document.getElementById(this.name + 'kdsi');
@@ -404,8 +406,8 @@ function buildSlideshowContainer() {
     show.appendChild(kdsi);
     // turn on controls
     var me = this;
-    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
-    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
+    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.shiftOneSlide(1) }, false);
+    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.shiftOneSlide(-1) }, false);
     // set up controls fade in/out
     show.addEventListener("mouseover", function(event) { me.fadeIn(event, ctrl, 1) }, false);
     show.addEventListener("mouseout", function(event) { me.fadeOut(event, ctrl, 1) }, false);
