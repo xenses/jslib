@@ -56,6 +56,8 @@
 // their innerHTML. So HTML fragments are fine. <html>, <head>, and
 // <body> elements are not.
 //
+// Embedding on page
+// -----------------
 // For each slideshow on a page, you need the following markup:
 //
 //   <div id="NAME"></div>
@@ -92,6 +94,11 @@
 // Any number of slideshows can be on a single page. Just add more
 // declarations, init() calls, and sets of HTML elements (with NAME
 // changed appropriately).
+//
+// Styling
+// -------
+//
+// 
 
 //-----------------------------------------------------------------------
 
@@ -311,8 +318,9 @@ function fadeIn(elem, frame) {
 
 //-----------------------------------------------------------------------
 
-function keyDispatch() {
-    var k = window.event.keyCode;
+function keyDispatch(e) {
+    var event = e || window.event;
+    var k = event.keyCode;
 
     if      (k == 37) { this.changeSlide(1) }
     else if (k == 39) { this.changeSlide(-1) }
@@ -368,11 +376,11 @@ function buildSlideshowContainer() {
     document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.changeSlide(1) }, false);
     document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.changeSlide(-1) }, false);
     // set up controls fade in/out
-    show.addEventListener("mouseover", function() { me.fadeIn(ctrl, 1) });
-    show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) });
+    show.addEventListener("mouseover", function() { me.fadeIn(ctrl, 1) }, false);
+    show.addEventListener("mouseout", function() { me.fadeOut(ctrl, 1) }, false);
     // set up keyboard handling
-    show.addEventListener("click", function() {show.focus() });
-    show.addEventListener('keydown', function() { me.keyDispatch() });
+    show.addEventListener("click", function() {show.focus() }, false);
+    show.addEventListener('keypress', function(event) { me.keyDispatch(event) }, false);
     // finish
     return show
 }
@@ -399,9 +407,9 @@ function buildControlOverlay() {
     lab.style.borderRight = "solid thin #ddd"
     lab.innerHTML = "&lArr; Prev";
     lab.addEventListener("mousedown",
-                         function() { lab.style.color = "#fff"; lab.style.backgroundColor = "#666" });
+                         function() { lab.style.color = "#fff"; lab.style.backgroundColor = "#666" }, false);
     lab.addEventListener("mouseup",
-                         function() { lab.style.color = "#ddd"; lab.style.backgroundColor = "#555" });
+                         function() { lab.style.color = "#ddd"; lab.style.backgroundColor = "#555" }, false);
     // right arrow block
     var rab = document.createElement('div');
     rab.setAttribute("id", this.name + "ctrln");
@@ -412,9 +420,9 @@ function buildControlOverlay() {
     rab.style.khtmlUserSelect = "none";
     rab.innerHTML = "Next &rArr;";
     rab.addEventListener("mousedown",
-                         function() { rab.style.color = "#fff"; rab.style.backgroundColor = "#666" });
+                         function() { rab.style.color = "#fff"; rab.style.backgroundColor = "#666" }, false);
     rab.addEventListener("mouseup",
-                         function() { rab.style.color = "#ddd"; rab.style.backgroundColor = "#555" });
+                         function() { rab.style.color = "#ddd"; rab.style.backgroundColor = "#555" }, false);
     // center block
     var cb = document.createElement('div');
     cb.setAttribute("id", this.name + "ctrlc");
@@ -430,7 +438,7 @@ function buildControlOverlay() {
     cbh.style.display = 'inline-block';
     cbh.style.width = "9%";
     cbh.innerHTML = "?"
-    cbh.addEventListener('click', buildHelpFrame);
+    cbh.addEventListener('click', buildHelpFrame, false);
     cb.appendChild(cbm);
     cb.appendChild(cbh);
     // put it all together
