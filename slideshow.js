@@ -291,7 +291,7 @@ function fadeOut(elem, frame) {
         return;
     }
     var me = this;
-    elem.style.opacity = elem.style.opacity / 3;
+    elem.style.opacity = elem.style.opacity / 2;
     this.faderTimeout = window.setTimeout(function () { me.fadeOut(elem, frame + 1) }, 20)
 }
 
