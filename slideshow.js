@@ -118,14 +118,14 @@
 // Do not add padding or margins to the slideshow divs you
 // define. Borders are okay.
 //
-// Individual slides all have the class '.slide', which can be use as
-// a selector for targetting styles on slides. Almost any styling
+// Individual slides are divs with class '.slide'. Almost any styling
 // should be okay on individual slides.
 //
 // Be aware that the entire slideshow is set to 'overflow: hidden', so
 // content must fit the slides. Slide size is inherited from the
-// slideshow, and should not be manipulated -- slide transitions
-// depend on precise alignment of the slides themselves.
+// slideshow constructor settings, and should not be manipulated --
+// slide transitions depend on precise alignment of the slides
+// themselves.
 
 //-----------------------------------------------------------------------
 
