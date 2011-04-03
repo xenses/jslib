@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.1 - 02 Apr 2011
+// v1.4.2 - 02 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Usage docs follow license
