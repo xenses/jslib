@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.2 - 02 Apr 2011
+// v1.4.3 - 02 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Usage docs follow license
@@ -126,11 +126,6 @@
 //-----------------------------------------------------------------------
 
 // TODO
-//
-// raise/bury controls when they are fading in/out to prevent
-// obscuring links in slides
-//
-// jump-to-slide
 //
 // implement delay
 //
@@ -345,6 +340,8 @@ function fadeOut(ev, elem, frame) {
     if (frame == 6) {
         elem.style.opacity = 0;
         this.faderTimeout = null;
+        // bury element
+        elem.style.zIndex = -50;
         return;
     }
     var me = this;
@@ -358,6 +355,7 @@ function fadeIn(ev, elem, frame) {
         if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
     }
 
+
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
@@ -368,6 +366,8 @@ function fadeIn(ev, elem, frame) {
         return;
     }
     if (frame == 1) {
+        // raise element
+        elem.style.zIndex = 50;
         elem.style.opacity = 0.125;
     } else {        
         elem.style.opacity = elem.style.opacity * 1.5;
@@ -429,6 +429,7 @@ function buildSlideshowContainer() {
     // create key-driven slide indicator
     var kdsi = document.createElement('div');
     kdsi.setAttribute('id', this.name + 'kdsi');
+    kdsi.style.zIndex = -50;
     kdsi.style.width = "5em";
     kdsi.style.position = "relative";
     kdsi.style.left = (this.x - 6) + "em";
@@ -458,6 +459,7 @@ function buildSlideshowContainer() {
 function buildControlOverlay() {
     var ol = document.createElement('div');
     ol.setAttribute("id", this.name + "ctrl");
+    ol.style.zIndex = -50;
     ol.style.width = this.x + 'em';
     ol.style.position = "relative";
     ol.style.top = "-3.5em";
