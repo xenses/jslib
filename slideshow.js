@@ -46,9 +46,10 @@
 // put it where you like and call it (as described below) from any
 // HTML doc you wish.
 //
-// In every directory with a slideshow doc, a subdirectory named
-// "fpslidedecks" is needed. That subdirectory holds additional
-// subdirs, one per slideshow, named after the slideshow.
+// In every directory with a slideshow-bearing HTML doc, a
+// subdirectory named "fpslidedecks" is needed. That subdirectory
+// holds additional subdirs, one per slideshow, named after the
+// slideshow.
 //
 // The slides are files in the deck directories, named slide0000,
 // slide0001, slide0002, and so forth. No extension.
@@ -64,7 +65,10 @@
 //
 //   <div id="NAME"></div>
 //
-// where NAME is the name you've chosen for the slideshow.
+// where NAME is the name you've chosen for the slideshow. This will
+// be the name you use in the Javascript initialization of the
+// slideshow, and the name of the subdirectory of 'fpslidedecks' where
+// the slides for this show will reside.
 //
 // Load the script:
 //
@@ -129,6 +133,8 @@
 // jump-to-slide
 //
 // implement delay
+//
+// roll-around in manual mode as well as delay?
 
 //-----------------------------------------------------------------------
 
@@ -258,18 +264,10 @@ function moveSlidestrip(dir, dist) {
     this.animateSlideTransition(1, pn, dist);
 }
 
-function updateSlideCounts() {
-    var count = this.current + '/' + this.count;
-    document.getElementById(this.name + 'ctrlcm').innerHTML = count;
-    document.getElementById(this.name + 'kdsi').innerHTML = count;
-}
-
-//-----------------------------------------------------------------------
-
 // animateSlideTransition
 //
-// This function is called recursively to animate switching from one
-// slide to the next. It takes three arguments:
+// Called recursively to animate switching from one slide to the
+// next. Takes three arguments:
 //
 //   frame  the current frame of the animation
 //
@@ -310,6 +308,14 @@ function animateSlideTransition(frame, dir, dist) {
     var me = this;
     window.setTimeout(function () { me.animateSlideTransition(frame + 1, dir, dist - curMove ) }, 30)
 }
+
+function updateSlideCounts() {
+    var count = this.current + '/' + this.count;
+    document.getElementById(this.name + 'ctrlcm').innerHTML = count;
+    document.getElementById(this.name + 'kdsi').innerHTML = count;
+}
+
+//-----------------------------------------------------------------------
 
 function fadeOut(ev, elem, frame) {
     var event = window.event || ev;
