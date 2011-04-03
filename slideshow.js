@@ -129,12 +129,6 @@
 
 //-----------------------------------------------------------------------
 
-// TODO
-//
-// implement delay
-
-//-----------------------------------------------------------------------
-
 function slideshow(args) {
     // constructor call variables
     this.name  = args.name;  // slideshow name
@@ -409,7 +403,7 @@ function keyDispatch(ev) {
     else if (k == 40) { this.jumpToSlide(this.count) }
     else { return }
 
-    // display transient slide count FIXME this also needs raise/bury
+    // display transient slide count
     var me = this;
     var kdsi = document.getElementById(this.name + 'kdsi');
     if (this.kdsiTimeout) {
