@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.4 - 02 Apr 2011
+// v1.4.5 - 03 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Usage docs follow license
@@ -163,7 +163,8 @@ function slideshow(args) {
     this.buildSlideshowContainer = buildSlideshowContainer;
     this.buildControlOverlay     = buildControlOverlay;
     this.buildHelpFrame          = buildHelpFrame;
-    this.keyDispatch       = keyDispatch;
+    this.keyDispatch = keyDispatch;
+    this.haltAdvance = haltAdvance;
 }
 
 function init() {
@@ -201,6 +202,7 @@ function createCallback (slideNum, req) {
 }
 
 function populateSlideShow() {
+    var me = this;
     var allThere = true; // sentinel for all slides being fetched
     for (var i = 1; i < this.count + 1; i++) {
         if (this.slides[i] == null) {
@@ -209,31 +211,39 @@ function populateSlideShow() {
     }
     if (allThere == false) {
         // we're missing slides, call this function again in 50ms
-        var me = this;
-        window.setTimeout( function() { me.populateSlideShow() }, 50);
-    } else {
-        // it's all here, then build the slides
-        var strip = document.getElementById(this.name + 'slidestrip');
-        // create slides and populate strip with them
-        for (var i = 1; i < this.count + 1; i++) {
-            var slide = document.createElement('div');
-            slide.setAttribute('id', this.name + 'slide' + i);
-            slide.style.width = this.x + "em";
-            slide.style.height = "100%";
-            slide.style.display = "inline-block";
-            slide.style.verticalAlign = "top";
-            slide.innerHTML = this.slides[i];
-            strip.appendChild(slide);
-        }
-        // set current/total indicator
-        this.updateSlideCounts();
+        window.setTimeout(function() { me.populateSlideShow() }, 50);
+        return;
     }
+
+    // it's all here, then build the slides
+    var strip = document.getElementById(this.name + 'slidestrip');
+    // create slides and populate strip with them
+    for (var i = 1; i < this.count + 1; i++) {
+        var slide = document.createElement('div');
+        slide.setAttribute('id', this.name + 'slide' + i);
+        slide.style.width = this.x + "em";
+        slide.style.height = "100%";
+        slide.style.display = "inline-block";
+        slide.style.verticalAlign = "top";
+        slide.innerHTML = this.slides[i];
+        strip.appendChild(slide);
+    }
+    // set current/total indicator
+    this.updateSlideCounts();
+    // kick off autoadvance if delay is set
+    if (this.conf.delay)
+        this.delayTimeout = window.setTimeout(function() { me.shiftOneSlide("next") }, this.conf.delay);
 }
 
 //-----------------------------------------------------------------------
 
 function shiftOneSlide(dir) {
-    // don't roll off ends
+    // rack up slide advance if needed, so that roll overs don't end slideshow
+    var me = this;
+    if (this.conf.delay)
+        this.delayTimeout = window.setTimeout(function() { me.shiftOneSlide("next") }, this.conf.delay + 30 * 7);
+
+    // don't roll off ends, but roll over if desired
     if (dir == "prev" && this.current == 1) {
         if (this.conf.roll) this.jumpToSlide(this.count);
         return;
@@ -242,6 +252,7 @@ function shiftOneSlide(dir) {
         if (this.conf.roll) this.jumpToSlide(1);
         return;
     }
+
     this.moveSlidestrip(dir, 1)
 }
 
@@ -364,7 +375,6 @@ function fadeIn(ev, elem, frame) {
         if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
     }
 
-
     if (this.faderTimeout) {
         window.clearTimeout(this.faderTimeout);
         this.faderTimeout = undefined;
@@ -388,6 +398,7 @@ function fadeIn(ev, elem, frame) {
 //-----------------------------------------------------------------------
 
 function keyDispatch(ev) {
+    this.haltAdvance();
     var event = window.event || ev;
     var k = event.keyCode;
 
@@ -396,6 +407,7 @@ function keyDispatch(ev) {
     else if (k == 39) { this.shiftOneSlide("next") }
     else if (k == 38) { this.jumpToSlide(1) }
     else if (k == 40) { this.jumpToSlide(this.count) }
+    else { return }
 
     // display transient slide count FIXME this also needs raise/bury
     var me = this;
@@ -406,6 +418,14 @@ function keyDispatch(ev) {
     }
     kdsi.style.opacity = 1;
     this.kdsiTimeout = window.setTimeout(function() {me.fadeOut(null, kdsi, 1) }, 500);
+}
+
+function haltAdvance() {
+    // turn off autoadvance if it is on
+    if (this.conf.delay) {
+        this.conf.delay = false;
+        if (this.delayTimeout) window.clearTimeout(this.delayTimeout);
+    }
 }
 
 //-----------------------------------------------------------------------
@@ -453,8 +473,10 @@ function buildSlideshowContainer() {
     show.appendChild(kdsi);
     // turn on controls
     var me = this;
-    document.getElementById(this.name + 'ctrlp').addEventListener("click", function() { me.shiftOneSlide("prev") }, false);
-    document.getElementById(this.name + 'ctrln').addEventListener("click", function() { me.shiftOneSlide("next") }, false);
+    var pnbutn = document.getElementById(this.name + 'ctrlp');
+    pnbutn.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("prev") }, false);
+    pnbutn = document.getElementById(this.name + 'ctrln');
+    pnbutn.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("next") }, false);
     // set up controls fade in/out
     show.addEventListener("mouseover", function(event) { me.fadeIn(event, ctrl, 1) }, false);
     show.addEventListener("mouseout", function(event) { me.fadeOut(event, ctrl, 1) }, false);
