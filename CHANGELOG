@@ -2,6 +2,8 @@ CHANGELOG
 
 // slideshow
 
+1.4.4 Slideshow rollaround implemented
+
 1.4.3 Elements which fadein/out are now raised or buried in the
       z-stack so they don't block elements in slides while transparent
 

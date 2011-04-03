@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.3 - 02 Apr 2011
+// v1.4.4 - 02 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Usage docs follow license
@@ -100,9 +100,13 @@
 //            undefined, the outline will be left as the user-agent
 //            default.
 //
+//   roll  If true, the slideshow controls will allow rolling around
+//         from the last to first slide, and vice versa.
+//
 //   delay  When defined, causes the slideshow to autoadvance one slide
 //          every <delay> ms. Any action by a viewer will turn off the
-//          autoadvance behavior.
+//          autoadvance behavior. If delay is defined then 'roll' is
+//          automatically set to true.
 //
 // Any number of slideshows can be on a single page. Just add more
 // declarations, init() calls, and sets of HTML elements (with NAME
@@ -128,8 +132,6 @@
 // TODO
 //
 // implement delay
-//
-// roll-around in manual mode as well as delay?
 
 //-----------------------------------------------------------------------
 
