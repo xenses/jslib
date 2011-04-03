@@ -51,8 +51,8 @@
 // holds additional subdirs, one per slideshow, named after the
 // slideshow.
 //
-// The slides are files in the deck directories, named slide0000,
-// slide0001, slide0002, and so forth. No extension.
+// The slides are files in the deck directories, named slide0001,
+// slide0002, slide0003, and so forth. No extension.
 //
 // The contents of the slide files are loaded via XMLHttpRequest,
 // slide elements are created, and the slide content is shoved into
@@ -140,6 +140,7 @@ function slideshow(args) {
     this.y     = args.y;     // height
     this.count = args.num;   // how many slides
     this.conf  = args        // stow args as configuration
+    if (this.conf.delay) this.conf.roll = true;
     // initialization variables
     this.slides    = new Object; // the slides
     this.current   = 1;          // current slide
@@ -212,7 +213,7 @@ function populateSlideShow() {
         // it's all here, then build the slides
         var strip = document.getElementById(this.name + 'slidestrip');
         // create slides and populate strip with them
-        for (var i = 0; i < this.count; i++) {
+        for (var i = 1; i < this.count; i++) {
             var slide = document.createElement('div');
             slide.setAttribute('id', this.name + 'slide' + i);
             slide.style.width = this.x + "em";
@@ -227,10 +228,18 @@ function populateSlideShow() {
     }
 }
 
+//-----------------------------------------------------------------------
+
 function shiftOneSlide(dir) {
     // don't roll off ends
-    if ((dir == "prev" && this.current == 1) ||
-        (dir == "next" && this.current == this.count)) { return }
+    if (dir == "prev" && this.current == 1) {
+        if (this.conf.roll) this.jumpToSlide(this.count);
+        return;
+    }
+    if (dir == "next" && this.current == this.count) {
+        if (this.conf.roll) this.jumpToSlide(1);
+        return;
+    }
     this.moveSlidestrip(dir, 1)
 }
 
