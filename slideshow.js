@@ -244,6 +244,14 @@ function jumpToSlide(slide) {
     // no out-of-bounds and switching to current is a no-op
     if (slide < 1 || slide > this.count) return;
     if (slide == this.current) return;
+    // erase any queued changes and wait until current slide
+    // transition is complete
+    if (this.isAnimating) {
+        var me = this;
+        this.queuedChanges = 0;
+        window.setTimeout(function() { me.jumpToSlide(slide) }, 50);
+        return;
+    }
 
     var dir = (slide > this.current) ? "next" : "prev";
     this.moveSlidestrip(dir, Math.abs(slide - this.current));
@@ -263,7 +271,7 @@ function moveSlidestrip(dir, slides) {
     // flag transition as in progress
     this.isAnimating = true;
     // move the slidestrip
-    this.oldMargin = this.margin;
+    //this.oldMargin = this.margin;
     this.current -= (slides * dir);
     this.updateSlideCounts();
     this.animateSlideTransition(1, dir, dist);
@@ -289,9 +297,10 @@ function moveSlidestrip(dir, slides) {
 //   Frame 7  : move to final position
 function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById(this.name + "slidestrip");
+    //alert(frame +":"+ dir +":"+ dist +":"+ strip.style.marginLeft);
     if (frame == 7) {
         // do final placement
-        this.margin = this.oldMargin + (this.x * dir);
+        this.margin = -((this.current * this.x) - this.x);
         strip.style.marginLeft = this.margin + "em";
         this.isAnimating = false;
         // handle queued changes
@@ -373,9 +382,13 @@ function keyDispatch(ev) {
     var event = window.event || ev;
     var k = event.keyCode;
 
+    // fire key events
     if      (k == 37) { this.shiftOneSlide("prev") }
     else if (k == 39) { this.shiftOneSlide("next") }
+    else if (k == 38) { this.jumpToSlide(1) }
+    else if (k == 40) { this.jumpToSlide(this.count) }
 
+    // display transient slide count FIXME this also needs raise/bury
     var me = this;
     var kdsi = document.getElementById(this.name + 'kdsi');
     if (this.kdsiTimeout) {
