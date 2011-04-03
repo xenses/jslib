@@ -167,7 +167,7 @@ function slideshow(args) {
 function init() {
     var me = this;
     this.buildSlideshowContainer();
-    for (var i = 0; i < this.count; i++) {
+    for (var i = 1; i < this.count + 1; i++) {
         // construct the slide URLs and fire off XHRs for them
         var leadingZs = '000';
         if      (i > 999) { leadingZs = '' }  // pretend to be
@@ -200,7 +200,7 @@ function createCallback (slideNum, req) {
 
 function populateSlideShow() {
     var allThere = true; // sentinel for all slides being fetched
-    for (var i = 0; i < this.count; i++) {
+    for (var i = 1; i < this.count + 1; i++) {
         if (this.slides[i] == null) {
             allThere = false;
         }
@@ -213,7 +213,7 @@ function populateSlideShow() {
         // it's all here, then build the slides
         var strip = document.getElementById(this.name + 'slidestrip');
         // create slides and populate strip with them
-        for (var i = 1; i < this.count; i++) {
+        for (var i = 1; i < this.count + 1; i++) {
             var slide = document.createElement('div');
             slide.setAttribute('id', this.name + 'slide' + i);
             slide.style.width = this.x + "em";
