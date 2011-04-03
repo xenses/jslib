@@ -2,6 +2,9 @@ CHANGELOG
 
 // slideshow
 
+1.4.3 Elements which fadein/out are now raised or buried in the
+      z-stack so they don't block elements in slides while transparent
+
 1.4.2 jumpToSlide implemented
 
 1.4.1 'outline' constructor argument added
