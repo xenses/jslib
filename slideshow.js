@@ -144,7 +144,6 @@ function slideshow(args) {
     this.slides    = new Object; // the slides
     this.current   = 1;          // current slide
     this.margin    = 0;          // left margin of slidestrip
-    this.oldMargin = 0;          // margin at beginning of animations
     this.queuedChanges  = 0;     // transitions queued during transition
     this.isAnimating    = 0;     // currently transitioning?
     // methods
@@ -266,7 +265,6 @@ function moveSlidestrip(dir, slides) {
     // flag transition as in progress
     this.isAnimating = true;
     // move the slidestrip
-    //this.oldMargin = this.margin;
     this.current -= (slides * dir);
     this.updateSlideCounts();
     this.animateSlideTransition(1, dir, dist);
