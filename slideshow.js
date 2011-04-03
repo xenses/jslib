@@ -157,7 +157,8 @@ function slideshow(args) {
     this.createCallback    = createCallback;
     this.populateSlideShow = populateSlideShow;
     this.shiftOneSlide     = shiftOneSlide;
-    this.keyDispatch       = keyDispatch;
+    this.jumpToSlide       = jumpToSlide;
+    this.moveSlidestrip    = moveSlidestrip;
     this.updateSlideCounts = updateSlideCounts;
     this.animateSlideTransition = animateSlideTransition;
     this.fadeIn  = fadeIn;
@@ -165,6 +166,7 @@ function slideshow(args) {
     this.buildSlideshowContainer = buildSlideshowContainer;
     this.buildControlOverlay     = buildControlOverlay;
     this.buildHelpFrame          = buildHelpFrame;
+    this.keyDispatch       = keyDispatch;
 }
 
 function init() {
@@ -242,26 +244,29 @@ function jumpToSlide(slide) {
     // no out-of-bounds and switching to current is a no-op
     if (slide < 1 || slide > this.count) return;
     if (slide == this.current) return;
+
     var dir = (slide > this.current) ? "next" : "prev";
+    this.moveSlidestrip(dir, Math.abs(slide - this.current));
 }
 
-function moveSlidestrip(dir, dist) {
-    pn = (dir == "prev") ? 1 : -1;
+function moveSlidestrip(dir, slides) {
+    var dist = slides * this.x;
+    dir = (dir == "prev") ? 1 : -1;
     // queue changes when a transition is in progress
     if (this.isAnimating) {
         // unless that change would overrun the bounds of the slideshow
         if (this.current - this.queuedChanges == 1 || 
             this.current - this.queuedChanges == this.count) { return }
-        this.queuedChanges += pn;
+        this.queuedChanges += dir;
         return 
     }
     // flag transition as in progress
     this.isAnimating = true;
     // move the slidestrip
-    this.current += -(pn);
     this.oldMargin = this.margin;
+    this.current -= (slides * dir);
     this.updateSlideCounts();
-    this.animateSlideTransition(1, pn, dist);
+    this.animateSlideTransition(1, dir, dist);
 }
 
 // animateSlideTransition
@@ -269,12 +274,13 @@ function moveSlidestrip(dir, dist) {
 // Called recursively to animate switching from one slide to the
 // next. Takes three arguments:
 //
-//   frame  the current frame of the animation
+//   frame  Current frame of the animation
 //
-//   dir    the direction of the animation (1 for left-to-right, -1 
-//          for right-to-left)
+//   dir    Direction of the animation: 1 for left-to-right (prev), -1
+//          for right-to-left (next)
 //
-//   dist   The distance remaining to be travelled in the animation
+//   dist   Distance remaining to be travelled in the animation, in
+//          em
 //
 // The animation algorithm is very simple:
 //
@@ -291,8 +297,8 @@ function animateSlideTransition(frame, dir, dist) {
         // handle queued changes
         if (this.queuedChanges != 0) {
             this.queuedChanges -= dir;
-            if (dir > 0) { this.shiftOneSlide(1)  }
-            else         { this.shiftOneSlide(-1) }
+            if (dir > 0) { this.shiftOneSlide("prev")  }
+            else         { this.shiftOneSlide("next") }
         }
         return;
     }
