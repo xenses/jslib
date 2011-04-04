@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.5 - 03 Apr 2011
+// v1.4.6 - 03 Apr 2011
 //
 // A basic Javascript slideshow in-an-object.
 // Usage docs follow license
@@ -115,17 +115,20 @@
 // Styling slideshows
 // ------------------
 //
-// Do not add padding or margins to the slideshow divs you
-// define. Borders are okay.
-//
-// Individual slides are divs with class '.slide'. Almost any styling
-// should be okay on individual slides.
+// Do not add padding to the slideshow divs you
+// define. Borders and margins are okay.
 //
 // Be aware that the entire slideshow is set to 'overflow: hidden', so
-// content must fit the slides. Slide size is inherited from the
-// slideshow constructor settings, and should not be manipulated --
-// slide transitions depend on precise alignment of the slides
-// themselves.
+// content must fit the slides. 
+//
+// Slide size is inherited from the slideshow constructor settings,
+// and should not be manipulated -- slide transitions depend on
+// precise alignment of the slides themselves.
+//
+// Individual slides are divs with class '.slide'. Almost any styling
+// should be okay on the slides themselves, except margins and
+// borders. Everything should be okay for elements within slides
+// though, again, it's up to you to make the content fit.
 
 //-----------------------------------------------------------------------
 
@@ -156,7 +159,7 @@ function slideshow(args) {
     this.fadeOut = fadeOut;
     this.buildSlideshowContainer = buildSlideshowContainer;
     this.buildControlOverlay     = buildControlOverlay;
-    this.buildHelpFrame          = buildHelpFrame;
+    this.buildHelpPanel          = buildHelpPanel;
     this.keyDispatch = keyDispatch;
     this.haltAdvance = haltAdvance;
 }
@@ -343,7 +346,9 @@ function updateSlideCounts() {
 
 function fadeOut(ev, elem, frame) {
     var event = window.event || ev;
-    if (event && event != null) {
+    // test ev to short-circuit when a null event is passed in explicitly
+    // the rest is to handle chrome/ff event differences
+    if (ev != null && event && event != null) {
         if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
     }
 
@@ -365,7 +370,7 @@ function fadeOut(ev, elem, frame) {
 
 function fadeIn(ev, elem, frame) {
     var event = window.event || ev;
-    if (event && event != null) {
+    if (ev != null && event && event != null) {
         if (event.relatedTarget.tagName != "BODY" && event.relatedTarget.tagName != "HTML") { return }
     }
 
@@ -465,12 +470,17 @@ function buildSlideshowContainer() {
     kdsi.style.border = "solid thin #ddd";
     kdsi.style.borderRadius = "0.5em";
     show.appendChild(kdsi);
+    // build help panel
+    var hp = this.buildHelpPanel();
+    show.appendChild(hp);
     // turn on controls
     var me = this;
-    var pnbutn = document.getElementById(this.name + 'ctrlp');
-    pnbutn.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("prev") }, false);
-    pnbutn = document.getElementById(this.name + 'ctrln');
-    pnbutn.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("next") }, false);
+    var widget = document.getElementById(this.name + 'ctrlp');
+    widget.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("prev") }, false);
+    widget = document.getElementById(this.name + 'ctrln');
+    widget.addEventListener("click", function() { me.haltAdvance(); me.shiftOneSlide("next") }, false);
+    widget = document.getElementById(this.name + 'ctrlch');
+    widget.addEventListener('click', function() { me.fadeIn(null, document.getElementById(me.name + "hp"), 1) }, false);
     // set up controls fade in/out
     show.addEventListener("mouseover", function(event) { me.fadeIn(event, ctrl, 1) }, false);
     show.addEventListener("mouseout", function(event) { me.fadeOut(event, ctrl, 1) }, false);
@@ -482,6 +492,7 @@ function buildSlideshowContainer() {
 }
 
 function buildControlOverlay() {
+    var me = this;
     var ol = document.createElement('div');
     ol.setAttribute("id", this.name + "ctrl");
     ol.style.zIndex = -50;
@@ -535,7 +546,6 @@ function buildControlOverlay() {
     cbh.style.display = 'inline-block';
     cbh.style.width = "9%";
     cbh.innerHTML = "?"
-    cbh.addEventListener('click', buildHelpFrame, false);
     cb.appendChild(cbm);
     cb.appendChild(cbh);
     // put it all together
@@ -545,6 +555,38 @@ function buildControlOverlay() {
     return ol;
 }
 
-function buildHelpFrame() {
-    alert("Apologies for the shittiness of this dialog. It'll be better soon.\n\nYou already found the mouse controls, but they cover up slide content. Click anywhere in slideshow to give keyboard focus (which you just did), then:\n\nLeft   Previous slide\nRight  Next slide\nUp     First slide\nDown   Last slide");
+function buildHelpPanel() {
+    var me = this;
+    var show = document.getElementById(this.name);
+    var hp = document.createElement('div');
+    hp.setAttribute("id", this.name + "hp");
+    hp.style.height = "10em";
+    hp.style.width = "10em";
+    hp.style.color = "#eee";
+    hp.style.backgroundColor = "#555";
+    hp.style.cursor = "default";
+    hp.style.border = "solid thin #999";
+    hp.style.borderRadius = "0.5em";
+    hp.style.fontFamily = "sans-serif";
+    hp.style.fontSize = "small";
+    hp.style.zIndex = -50;
+    hp.style.opacity = 0;
+    hp.style.position = "relative";
+    hp.style.top = -((this.y / 2) + (10 / 2) + 7) + "em";
+    hp.style.left = ((this.x / 2) - (10 / 2) + 3) + "em";
+    var hpx = document.createElement('div');
+    hpx.setAttribute("id", this.name + "hpx");
+    hpx.style.float = "right";
+    hpx.style.margin = "3px";
+    hpx.style.paddingLeft = "2px";
+    hpx.style.paddingRight = "2px";
+    hpx.style.backgroundColor = "#666"
+    hpx.style.border = "solid thin #999";
+    hpx.innerHTML = "x";
+    hpx.addEventListener("click", function() { me.fadeOut(null, hp, 1) }, false)
+    hp.appendChild(hpx);
+    var hpcontent = document.createElement('div');
+    hpcontent.innerHTML = "<table style='margin-top: 2em; margin-left: 0.5em;'><tr><td>Left</td><td>Prev slide</td></tr><tr><td>Right</td><td>Next slide</td></tr><tr><td>Up</td><td>First slide</td></tr><tr><td>Down</td><td>Last slide</td><tr></table>";
+    hp.appendChild(hpcontent);
+    return hp;
 }
