@@ -585,7 +585,7 @@ function buildHelpPanel() {
     hpx.addEventListener("click", function() { me.fadeOut(null, hp, 1) }, false)
     hp.appendChild(hpx);
     var hpcontent = document.createElement('div');
-    hpcontent.innerHTML = "<table style='margin-top: 2em; margin-left: 0.5em;'><tr><td>Left</td><td>Prev slide</td></tr><tr><td>Right</td><td>Next slide</td></tr><tr><td>Up</td><td>First slide</td></tr><tr><td>Down</td><td>Last slide</td><tr></table>";
+    hpcontent.innerHTML = "<table style='color: #eee; font-size: small; margin-top: 2em; margin-left: 0.5em;'><tr><td>Left</td><td>Prev slide</td></tr><tr><td>Right</td><td>Next slide</td></tr><tr><td>Up</td><td>First slide</td></tr><tr><td>Down</td><td>Last slide</td><tr></table>";
     hp.appendChild(hpcontent);
     return hp;
 }
