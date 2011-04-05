@@ -435,7 +435,6 @@ function buildSlideshowContainer() {
     show.style.width = this.x + "em";
     show.style.height = this.y + "em";
     show.style.overflow = "hidden";
-    show.style.margin = 0;
     show.style.padding = 0;
     show.setAttribute("tabindex", -1);
     if (this.conf.outline != undefined) {
