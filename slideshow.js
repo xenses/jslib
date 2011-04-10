@@ -218,6 +218,7 @@ function populateSlideShow() {
     for (var i = 1; i < this.count + 1; i++) {
         var slide = document.createElement('div');
         slide.setAttribute('id', this.name + 'slide' + i);
+        slide.setAttribute('class', 'slide');
         slide.style.width = this.x + "em";
         slide.style.height = "100%";
         slide.style.display = "inline-block";
