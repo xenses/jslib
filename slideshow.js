@@ -371,6 +371,7 @@ function buildSlideshowContainer() {
     kdsi.style.top = "-" + (this.y + 1) + "em";
     kdsi.style.backgroundColor = "#555";
     kdsi.style.color = "#ddd";
+    kdsi.style.fontFamily = 'sans-serif';
     kdsi.style.textAlign = "center";
     kdsi.style.padding = "3px";
     kdsi.style.opacity = 0;
