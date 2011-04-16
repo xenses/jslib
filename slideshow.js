@@ -406,7 +406,7 @@ function buildControlOverlay() {
     ol.style.zIndex = -50;
     ol.style.width = this.x + 'em';
     ol.style.position = "relative";
-    ol.style.top = "-3.5em";
+    ol.style.top = "-2.5em";
     ol.style.color = '#ddd';
     ol.style.backgroundColor = '#555';
     ol.style.borderTop = 'solid thin #555';
