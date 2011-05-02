@@ -125,11 +125,8 @@ function populateSlideShow() {
     for (var i = 1; i < this.count + 1; i++) {
         var slide = document.createElement('div');
         slide.setAttribute('id', this.name + 'slide' + i);
-        slide.setAttribute('class', 'slide');
+        slide.setAttribute('class', 'fpjsssslide');
         slide.style.width = this.x + "em";
-        slide.style.height = "100%";
-        slide.style.display = "inline-block";
-        slide.style.verticalAlign = "top";
         slide.innerHTML = this.slides[i];
         strip.appendChild(slide);
     }
@@ -217,7 +214,6 @@ function moveSlidestrip(dir, slides) {
 //   Frame 7  : move to final position
 function animateSlideTransition(frame, dir, dist) {
     var strip = document.getElementById(this.name + "slidestrip");
-    //alert(frame +":"+ dir +":"+ dist +":"+ strip.style.marginLeft);
     if (frame == 7) {
         // do final placement
         this.margin = -((this.current * this.x) - this.x);
@@ -340,11 +336,10 @@ function haltAdvance() {
 function buildSlideshowContainer() {
     var me = this;
     var show = document.getElementById(this.name);
+    show.setAttribute("tabindex", -1);
+    show.setAttribute("class", "fpjssscontainer");
     show.style.width = this.x + "em";
     show.style.height = this.y + "em";
-    show.style.overflow = "hidden";
-    show.style.padding = 0;
-    show.setAttribute("tabindex", -1);
     if (this.conf.outline != undefined) {
         if (this.conf.outline) {
             show.style.outlineColor = this.conf.outline;
@@ -364,19 +359,9 @@ function buildSlideshowContainer() {
     // create key-driven slide indicator
     var kdsi = document.createElement('div');
     kdsi.setAttribute('id', this.name + 'kdsi');
-    kdsi.style.zIndex = -50;
-    kdsi.style.width = "5em";
-    kdsi.style.position = "relative";
+    show.setAttribute("class", "fpjssskdsi");
     kdsi.style.left = (this.x - 6) + "em";
     kdsi.style.top = "-" + (this.y + 1) + "em";
-    kdsi.style.backgroundColor = "#555";
-    kdsi.style.color = "#ddd";
-    kdsi.style.fontFamily = 'sans-serif';
-    kdsi.style.textAlign = "center";
-    kdsi.style.padding = "3px";
-    kdsi.style.opacity = 0;
-    kdsi.style.border = "solid thin #ddd";
-    kdsi.style.borderRadius = "0.5em";
     show.appendChild(kdsi);
     // build help panel
     var hp = this.buildHelpPanel();
@@ -402,24 +387,13 @@ function buildSlideshowContainer() {
 function buildControlOverlay() {
     var me = this;
     var ol = document.createElement('div');
+    ol.setAttribute("class", "fpjsssctrl");
     ol.setAttribute("id", this.name + "ctrl");
-    ol.style.zIndex = -50;
     ol.style.width = this.x + 'em';
-    ol.style.position = "relative";
-    ol.style.top = "-2.5em";
-    ol.style.color = '#ddd';
-    ol.style.backgroundColor = '#555';
-    ol.style.borderTop = 'solid thin #555';
-    ol.style.borderBottom = 'solid thin #555';
-    ol.style.fontFamily = 'sans-serif';
-    ol.style.cursor = "default";
-    ol.style.opacity = 0;
     // left arrow block
     var lab = document.createElement('div');
     lab.setAttribute("id", this.name + "ctrlp");
-    lab.style.display = 'inline-block';
     lab.style.width = "20%";
-    lab.style.textAlign = "center";
     lab.style.borderRight = "solid thin #ddd"
     lab.innerHTML = "&lArr; Prev";
     lab.addEventListener("mousedown",
@@ -429,9 +403,7 @@ function buildControlOverlay() {
     // right arrow block
     var rab = document.createElement('div');
     rab.setAttribute("id", this.name + "ctrln");
-    rab.style.display = 'inline-block';
     rab.style.width = "20%";
-    rab.style.textAlign = "center";
     rab.style.borderLeft = "solid thin #ddd"
     rab.style.khtmlUserSelect = "none";
     rab.innerHTML = "Next &rArr;";
@@ -442,16 +414,13 @@ function buildControlOverlay() {
     // center block
     var cb = document.createElement('div');
     cb.setAttribute("id", this.name + "ctrlc");
-    cb.style.display = 'inline-block';
     cb.style.width = "59%";
     var cbm = document.createElement('div');
     cbm.setAttribute("id", this.name + "ctrlcm");
-    cbm.style.display = 'inline-block';
     cbm.style.width = "89%";
     cbm.style.paddingLeft = "3px";
     var cbh = document.createElement('div');
     cbh.setAttribute("id", this.name + "ctrlch");
-    cbh.style.display = 'inline-block';
     cbh.style.width = "9%";
     cbh.innerHTML = "?"
     cb.appendChild(cbm);
@@ -468,33 +437,16 @@ function buildHelpPanel() {
     var show = document.getElementById(this.name);
     var hp = document.createElement('div');
     hp.setAttribute("id", this.name + "hp");
-    hp.style.height = "10em";
-    hp.style.width = "10em";
-    hp.style.color = "#eee";
-    hp.style.backgroundColor = "#555";
-    hp.style.cursor = "default";
-    hp.style.border = "solid thin #999";
-    hp.style.borderRadius = "0.5em";
-    hp.style.fontFamily = "sans-serif";
-    hp.style.fontSize = "small";
-    hp.style.zIndex = -50;
-    hp.style.opacity = 0;
-    hp.style.position = "relative";
+    hp.setAttribute("class", "fpjssshp");
     hp.style.top = -((this.y / 2) + (10 / 2) + 7) + "em";
     hp.style.left = ((this.x / 2) - (10 / 2) + 3) + "em";
     var hpx = document.createElement('div');
     hpx.setAttribute("id", this.name + "hpx");
-    hpx.style.float = "right";
-    hpx.style.margin = "3px";
-    hpx.style.paddingLeft = "2px";
-    hpx.style.paddingRight = "2px";
-    hpx.style.backgroundColor = "#666"
-    hpx.style.border = "solid thin #999";
     hpx.innerHTML = "x";
     hpx.addEventListener("click", function() { me.fadeOut(null, hp, 1) }, false)
     hp.appendChild(hpx);
-    var hpcontent = document.createElement('div');
-    hpcontent.innerHTML = "<table style='color: #eee; font-size: small; margin-top: 2em; margin-left: 0.5em;'><tr><td>Left</td><td>Prev slide</td></tr><tr><td>Right</td><td>Next slide</td></tr><tr><td>Up</td><td>First slide</td></tr><tr><td>Down</td><td>Last slide</td><tr></table>";
+    var hpcontent = document.createElement('table');
+    hpcontent.innerHTML = "<tr><td>Left</td><td>Prev slide</td></tr><tr><td>Right</td><td>Next slide</td></tr><tr><td>Up</td><td>First slide</td></tr><tr><td>Down</td><td>Last slide</td><tr>";
     hp.appendChild(hpcontent);
     return hp;
 }
