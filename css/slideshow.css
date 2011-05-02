@@ -1,0 +1,28 @@
+/* root slideshow container */
+.fpjssscontainer { overflow: hidden; padding: 0; }
+
+/* individual slides */
+.fpjsssslide { height: 100%; display: inline-block; vertical-align: top; }
+
+/* main controls overlay */
+.fpjsssctrl { z-index: -50; position: relative; top: -2.5em;
+              color: #ddd; background-color: #555; border-top: solid thin #555;
+              border-bottom: solid thin #555; font-family: sans-serif;
+              cursor: default; opacity: 0;}
+.fpjsssctrl div { display: inline-block; text-align: center; }
+
+/* kdsi -- the popup slide number indicator for key-driven navigation */
+.fpjssskdsi { z-index: -50; width: 5em; position: relative; background-color: #555;
+              color: #ddd; font-family: sans-serif; text-align: center;
+              padding: 3px; opacity: 0; border: solid thin #ddd;
+              border-radius: 0.5em; }
+
+/* help panel */
+.fpjssshp { height: 10em; width: 10em; color: #eee; background-color: #555;
+            cursor: default; border: solid thin #999; border-radius: 0.5em;
+            font-family: sans-serif; font-size: small; z-index: -50;
+            opacity: 0; position: relative; }
+.fpjssshp div { float: right; margin: 3px; padding-left: 2px;
+                padding-right: 2px; background-color: #666;
+                border: solid thin #999; }
+.fpjssshp table { color: #eee; font-size: small; margin-top: 2em; margin-left: 0.5em; }
