@@ -97,7 +97,7 @@ Slide size is inherited from the slideshow constructor settings, and
 should not be manipulated -- slide transitions depend on precise
 alignment of the slides themselves.
 
-Individual slides are divs with class `slide`. Almost any styling
-should be okay on the slides themselves, except margins and
+Individual slides are divs with class `fpjsssslide`. Almost any
+styling should be okay on the slides themselves, except margins and
 borders. Everything should be okay for elements within slides though,
 again, it's up to you to make the content fit.
