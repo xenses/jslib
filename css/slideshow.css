@@ -5,7 +5,7 @@
 .fpjsssslide { height: 100%; display: inline-block; vertical-align: top; }
 
 /* main controls overlay */
-.fpjsssctrl { z-index: -50; position: relative; top: -2.5em;
+.fpjsssctrl { z-index: -50; position: relative; top: -2.0em;
               color: #ddd; background-color: #555; border-top: solid thin #555;
               border-bottom: solid thin #555; font-family: sans-serif;
               cursor: default; opacity: 0;}
