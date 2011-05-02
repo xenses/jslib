@@ -1,5 +1,5 @@
 // slideshow.js
-// v1.4.6 - 03 Apr 2011
+// v1.4.7 - 01 May 2011
 //
 // A basic Javascript slideshow in-an-object.
 
@@ -359,7 +359,7 @@ function buildSlideshowContainer() {
     // create key-driven slide indicator
     var kdsi = document.createElement('div');
     kdsi.setAttribute('id', this.name + 'kdsi');
-    show.setAttribute("class", "fpjssskdsi");
+    kdsi.setAttribute("class", "fpjssskdsi");
     kdsi.style.left = (this.x - 6) + "em";
     kdsi.style.top = "-" + (this.y + 1) + "em";
     show.appendChild(kdsi);
