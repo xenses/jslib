@@ -1,9 +1,11 @@
 Firepear jslib slideshow usage
 ==============================
 
-One copy of this script can drive any number of slideshows. Just
-put it where you like and call it (as described below) from any
-HTML doc you wish.
+One copy of this script can drive any number of slideshows. Just put
+it (and its stylesheet) where ever you like and call it, as described
+below, from any HTML doc you wish.
+
+
 
 In every directory with a slideshow-bearing HTML doc, a
 subdirectory named `fpslidedecks` is needed. That subdirectory
@@ -13,15 +15,32 @@ slideshow.
 The slides are files in the deck directories, named `slide0001`,
 `slide0002`, `slide0003`, and so forth. No extension.
 
-The contents of the slide files are loaded via XMLHttpRequest, slide
-elements are created, and the slide content is shoved into their
-innerHTML. HTML document fragments are fine; `<html>`, `<head>`, and
-`<body>` elements are not.
+The contents of the slide files are loaded when the document
+containing the slideshow is. HTML document fragments, and almost all
+markup, are safe in slide ; `<html>`, `<head>`, and `<body>` elements
+definitely are not.
 
 Setting up slideshows
 ---------------------
 
-For each slideshow on a page, you need the following markup:
+The slideshow javascript and css need to be loaded as well.
+
+```
+  <link rel="stylesheet" href="/path/to/slideshow.css" />
+  <script src='/path/to/slideshow.js'></script>
+```
+
+And initialize the slideshow(s):
+
+```
+  <script>
+    // repeat these lines for each slideshow you want to have
+    var ss = new slideshow({'name':'NAME', 'x':WIDTH, 'y':HEIGHT, 'num':SLIDES});
+    window.addEventListener("DOMContentLoaded", function() { ss.init() }, false);
+  </script>
+```
+
+And then, for each slideshow on a page, you need the following markup:
 
 ```
   <div id="NAME"></div>
@@ -32,23 +51,12 @@ be the name you use in the Javascript initialization of the
 slideshow, and the name of the subdirectory of `fpslidedecks` where
 the slides for this show will reside.
 
-Load the script:
 
-```
-  <script src='/path/to/slideshow.js'></script>
-```
+Any number of slideshows can be on a single page. Just add more
+declarations, `init()` calls, and sets of HTML elements (with `NAME`
+changed appropriately).
 
-And initialize the slideshow(s):
-
-```
-  <script>
-    // repeat these lines for each slideshow you want to have
-    var ss = new slideshow({'name':'NAME', 'x':35, 'y':20, 'num':10});
-    window.addEventListener("DOMContentLoaded", function() { ss.init() }, false);
-  </script>
-```
-
-The required arguments to the constructor are:
+Backing up to the constructor, its required arguments are:
 
 ```
   name  Slideshow name; should match one of your divs
@@ -58,9 +66,7 @@ The required arguments to the constructor are:
 ```
 
 Things will break horribly if you don't have all these.  There is
-no argument validation yet.
-
-The constructor also has optional arguments:
+no argument validation yet. There are also optional arguments:
 
 ```
   outline  If defined and *true*, it will be used to set the color
@@ -77,10 +83,6 @@ The constructor also has optional arguments:
          autoadvance behavior. If delay is defined then 'roll' is
          automatically set to true.
 ```
-
-Any number of slideshows can be on a single page. Just add more
-declarations, `init()` calls, and sets of HTML elements (with `NAME`
-changed appropriately).
 
 Styling slideshows
 ------------------
