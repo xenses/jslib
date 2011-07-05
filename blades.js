@@ -1,5 +1,5 @@
 // blades.js
-// v1.0.0 - xx July 2011
+// v1.0.0 - 05 July 2011
 //
 // Blade-style UI control
 
