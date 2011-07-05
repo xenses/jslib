@@ -41,8 +41,10 @@
 
 function blade(args) {
     // constructor call variables
-    this.name  = args.name;  // slideshow name
-    this.x     = args.x;     // *individual* blade width
+    this.name   = args.name;  // slideshow name
+    this.x      = args.x;     // *individual* blade width
+    this.fcolor = args.focus; // blade title focus color
+    this.bcolor = args.blur;  // blade title blurred color
     // initialization variables
     this.blades = new Object;
     this.blades.count = 0;          // how many blades right now?
@@ -59,8 +61,10 @@ function blade(args) {
 function init(bladeNames) {
     // build blades
     bladeNames.forEach(constructBlade, this);
+    // fix blade count
+    this.blades.count--;
     // one-off to set proper color on last blade's title
-    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = "#444";
+    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = this.fcolor;
 }
 
 function constructBlade(bladeData, index) {
@@ -75,18 +79,18 @@ function constructBlade(bladeData, index) {
     bElem.style.left   = (this.blades.count * 2) + 'em';
     // stow metadata
     this.blades.meta[wholeName] = new Object;
-    this.blades.meta[wholeName]['left'] = this.blades.count + 'em';
+    this.blades.meta[wholeName]['left'] = (this.blades.count * 2) + 'em';
     if (this.blades.count == 0) {
         this.blades.meta[wholeName]['right'] = '0 em';
     } else {
-        this.blades.meta[wholeName]['right'] = (this.x + (this.blades.count * 2)) + 'em';
+        this.blades.meta[wholeName]['right'] = (this.x + (this.blades.count * 2) - 1) + 'em';
     }
     this.blades.meta[wholeName]['order'] = this.blades.count;
     this.blades.order.push(wholeName);
     // set event listener
     var me = this;
     bElem.addEventListener('click', function() { me.switchBlade(wholeName) }, false);
-    // add to blades obj storage and increment count
+    // add to blades obj storage and set open blade
     this.blades.elem[wholeName] = bElem;    
     this.blades.open = this.blades.count;
     this.blades.count++;
@@ -105,7 +109,26 @@ function constructBlade(bladeData, index) {
 
 function switchBlade(bladeName) {
     if (this.blades.meta[bladeName]['order'] == this.blades.open) return;
-    alert(this.blades.meta[bladeName]);
+    // deselect current blade's title
+    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = this.bcolor;
+
+    // set blade.open to new val
+    this.blades.open = this.blades.meta[bladeName]['order'];
+
+    // move every blade up to the open one to the left
+    for (var i = 0; i <= this.blades.open; i++) {
+        var curBlade = this.blades.order[i];
+        this.blades.elem[curBlade].style.left = this.blades.meta[curBlade]['left'];
+    }
+    // and every blade after the open one to the right
+    for (var i = this.blades.open + 1; i <= this.blades.count; i++) {
+        var curBlade = this.blades.order[i];
+        this.blades.elem[curBlade].style.left = this.blades.meta[curBlade]['right'];
+    }
+
+    // select new blade's title
+    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = this.fcolor;
+
 }
 
 function setContent(bladeName, content) {
