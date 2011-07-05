@@ -45,15 +45,70 @@ function blade(args) {
     this.x     = args.x;     // *individual* blade width
     // initialization variables
     this.blades = new Object;
+    this.blades.count = 0;          // how many blades right now?
+    this.blades.open  = 0;          // which blade is open?
+    this.blades.order = new Array;  // name-to-order mapping
+    this.blades.elem  = new Object; // holds blade elements
+    this.blades.meta  = new Object; // info about blades (l, r, order)
     // methods
     this.init  = init;
+    this.switchBlade = switchBlade;
+    this.setContent  = setContent;
 }
 
 function init(bladeNames) {
-    bladeNames.forEach(constructBlade, this)
+    // build blades
+    bladeNames.forEach(constructBlade, this);
+    // one-off to set proper color on last blade's title
+    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = "#444";
 }
 
-function constructBlade(element, index) {
+function constructBlade(bladeData, index) {
+    var wholeName = this.name + bladeData[0];
     var bladeDiv = document.getElementById(this.name);
+    // create actual blade div
+    var bElem = document.createElement('div');
+    // set its name, zindex, and left-position
+    bElem.setAttribute('id', wholeName);
+    bElem.setAttribute('class', 'blade');
+    bElem.style.zIndex = this.blades.count;
+    bElem.style.left   = (this.blades.count * 2) + 'em';
+    // stow metadata
+    this.blades.meta[wholeName] = new Object;
+    this.blades.meta[wholeName]['left'] = this.blades.count + 'em';
+    if (this.blades.count == 0) {
+        this.blades.meta[wholeName]['right'] = '0 em';
+    } else {
+        this.blades.meta[wholeName]['right'] = (this.x + (this.blades.count * 2)) + 'em';
+    }
+    this.blades.meta[wholeName]['order'] = this.blades.count;
+    this.blades.order.push(wholeName);
+    // set event listener
+    var me = this;
+    bElem.addEventListener('click', function() { me.switchBlade(wholeName) }, false);
+    // add to blades obj storage and increment count
+    this.blades.elem[wholeName] = bElem;    
+    this.blades.open = this.blades.count;
+    this.blades.count++;
+    // add title
+    var bTitle = document.createElement('h2');
+    bTitle.setAttribute('id', wholeName + 'title');
+    bTitle.setAttribute('class', 'btitle');
+    bTitle.innerHTML = bladeData[1];
+    bElem.appendChild(bTitle);
+    // add content container to blade, then add blade to its own container
+    var bCont = document.createElement('div');
+    bCont.setAttribute('id', wholeName + 'cont');
+    bElem.appendChild(bCont);
+    bladeDiv.appendChild(bElem);
+}
 
+function switchBlade(bladeName) {
+    if (this.blades.meta[bladeName]['order'] == this.blades.open) return;
+    alert(this.blades.meta[bladeName]);
+}
+
+function setContent(bladeName, content) {
+    var bCont = document.getElementById(bladeName + 'cont');
+    bCont.innerHTML = content;
 }
