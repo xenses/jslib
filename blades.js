@@ -110,7 +110,9 @@ function constructBlade(bladeData, index) {
 function switchBlade(bladeName) {
     if (this.blades.meta[bladeName]['order'] == this.blades.open) return;
     // deselect current blade's title
-    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = this.bcolor;
+    var curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title');
+    curBlade.style.color = this.bcolor;
+    curBlade.style.cursor = "default";
 
     // set blade.open to new val
     this.blades.open = this.blades.meta[bladeName]['order'];
@@ -118,7 +120,7 @@ function switchBlade(bladeName) {
     // move every blade up to the open one to the left
     for (var i = 0; i <= this.blades.open; i++) {
         var curBlade = this.blades.order[i];
-        this.blades.elem[curBlade].style.left = this.blades.meta[curBlade]['left'];
+        this.blades.elem[curBladeNum].style.left = this.blades.meta[curBlade]['left'];
     }
     // and every blade after the open one to the right
     for (var i = this.blades.open + 1; i <= this.blades.count; i++) {
@@ -127,8 +129,9 @@ function switchBlade(bladeName) {
     }
 
     // select new blade's title
-    document.getElementById(this.blades.order[this.blades.open] + 'title').style.color = this.fcolor;
-
+    curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title');
+    curBlade.style.color = this.fcolor;
+    curBlade.style.cursor = "pointer";
 }
 
 function setContent(bladeName, content) {
