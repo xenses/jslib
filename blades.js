@@ -42,4 +42,18 @@
 function blade(args) {
     // constructor call variables
     this.name  = args.name;  // slideshow name
+    this.x     = args.x;     // *individual* blade width
+    // initialization variables
+    this.blades = new Object;
+    // methods
+    this.init  = init;
+}
+
+function init(bladeNames) {
+    bladeNames.forEach(constructBlade, this)
+}
+
+function constructBlade(element, index) {
+    var bladeDiv = document.getElementById(this.name);
+
 }
