@@ -77,6 +77,7 @@ function constructBlade(bladeData, index) {
     // set its name, zindex, and left-position
     bElem.setAttribute('id', wholeName);
     bElem.setAttribute('class', 'blade');
+    bElem.style.width  = this.x + 'em';
     bElem.style.zIndex = this.blades.count;
     bElem.style.left   = (this.blades.count * 2) + 'em';
     // stow metadata
@@ -107,6 +108,8 @@ function constructBlade(bladeData, index) {
     bCont.setAttribute('id', wholeName + 'cont');
     bElem.appendChild(bCont);
     bladeDiv.appendChild(bElem);
+    // reset blade container's width
+    bladeDiv.style.width = (this.x + ((this.blades.count - 1) *2)) + 'em';
 }
 
 function switchBlade(bladeName) {
