@@ -1,5 +1,5 @@
 // blades.js
-// v1.0.0 - 05 July 2011
+// v1.0.1 - 10 July 2011
 //
 // Blade-style UI control
 
@@ -67,6 +67,9 @@ function init(bladeNames) {
     var curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title')
     curBlade.style.color = this.fcolor;
     curBlade.style.cursor = "default";
+    // turn off clipping for blade container
+    var bladeDiv = document.getElementById(this.name);
+    bladeDiv.style.overflow = "hidden";
 }
 
 function constructBlade(bladeData, index) {
@@ -114,10 +117,13 @@ function constructBlade(bladeData, index) {
 
 function switchBlade(bladeName) {
     if (this.blades.meta[bladeName]['order'] == this.blades.open) return;
-    // deselect current blade's title
-    var curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title');
-    curBlade.style.color = this.bcolor;
-    curBlade.style.cursor = "pointer";
+
+    // deselect current blade's title and collapse blade
+    var curBlade = document.getElementById(this.blades.order[this.blades.open]);
+    var curBladeTitle = document.getElementById(this.blades.order[this.blades.open] + 'title');
+    curBlade.style.width = "2em";
+    curBladeTitle.style.color = this.bcolor;
+    curBladeTitle.style.cursor = "pointer";
 
     // set blade.open to new val
     this.blades.open = this.blades.meta[bladeName]['order'];
@@ -133,10 +139,12 @@ function switchBlade(bladeName) {
         this.blades.elem[curBlade].style.left = this.blades.meta[curBlade]['right'];
     }
 
-    // select new blade's title
-    curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title');
-    curBlade.style.color = this.fcolor;
-    curBlade.style.cursor = "default";
+    // expand new blade and color it's title
+    curBlade = document.getElementById(this.blades.order[this.blades.open]);
+    curBlade.style.width = this.x + 'em';
+    curBladeTitle = document.getElementById(this.blades.order[this.blades.open] + 'title');
+    curBladeTitle.style.color = this.fcolor;
+    curBladeTitle.style.cursor = "default";
 }
 
 function setContent(bladeName, content) {
