@@ -2,6 +2,9 @@ CHANGELOG
 
 // blades
 
+1.0.1 Deselected blades now collapse to avoid hscroll in smaller
+      windows (10 Jul)
+
 1.0.0 Initial work (5 Jul 2011)
 
 // slideshow
