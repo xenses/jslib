@@ -7,3 +7,6 @@ What's here:
 
   * `blades.js`, A bladed UI component
   * `slideshow.js`, A self-loading, self-contained slide deck viewer.
+
+User-oriented documentation is in the `docs` directory, in markdown
+format.
