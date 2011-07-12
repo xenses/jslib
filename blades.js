@@ -1,5 +1,5 @@
 // blades.js
-// v1.0.1 - 10 July 2011
+// v1.0.2 - 11 July 2011
 //
 // Blade-style UI control
 
@@ -39,7 +39,7 @@
 
 //-----------------------------------------------------------------------
 
-function blade(args) {
+function bladeset(args) {
     // constructor call variables
     this.name   = args.name;  // slideshow name
     this.x      = args.x;     // *individual* blade width
