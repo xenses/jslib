@@ -36,6 +36,9 @@ adding to their width.
 --------------------------
 ```
 
+You may have seen these on the Xbox 360 and in other consumery, shiny
+things.
+
 
 Setting up blades
 -----------------
