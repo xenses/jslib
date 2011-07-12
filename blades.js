@@ -1,5 +1,5 @@
 // blades.js
-// v1.0.2 - 11 July 2011
+// v1.0.3 - 11 July 2011
 //
 // Blade-style UI control
 
@@ -43,6 +43,7 @@ function bladeset(args) {
     // constructor call variables
     this.name   = args.name;  // slideshow name
     this.x      = args.x;     // *individual* blade width
+    this.hx     = args.hx;    // blade header width
     this.fcolor = args.focus; // blade title focus color
     this.bcolor = args.blur;  // blade title blurred color
     // initialization variables
@@ -63,13 +64,12 @@ function init(bladeNames) {
     bladeNames.forEach(constructBlade, this);
     // fix blade count
     this.blades.count--;
-    // one-off to set proper color on last blade's title
-    var curBlade = document.getElementById(this.blades.order[this.blades.open] + 'title')
-    curBlade.style.color = this.fcolor;
-    curBlade.style.cursor = "default";
-    // turn off clipping for blade container
-    var bladeDiv = document.getElementById(this.name);
-    bladeDiv.style.overflow = "hidden";
+    // one-off to set proper styles on last blade
+    var curBlade = document.getElementById(this.blades.order[this.blades.open])
+    curBlade.style.width = this.x + 'em';
+    var curBladeTitle = document.getElementById(this.blades.order[this.blades.open] + 'title')
+    curBladeTitle.style.color = this.fcolor;
+    curBladeTitle.style.cursor = "default";
 }
 
 function constructBlade(bladeData, index) {
@@ -80,9 +80,10 @@ function constructBlade(bladeData, index) {
     // set its name, zindex, and left-position
     bElem.setAttribute('id', wholeName);
     bElem.setAttribute('class', 'blade');
-    bElem.style.width  = this.x + 'em';
+    bElem.style.width  = this.hx + 'em';
     bElem.style.zIndex = this.blades.count;
     bElem.style.left   = (this.blades.count * 2) + 'em';
+
     // stow metadata
     this.blades.meta[wholeName] = new Object;
     this.blades.meta[wholeName]['left'] = (this.blades.count * 2) + 'em';
@@ -93,19 +94,24 @@ function constructBlade(bladeData, index) {
     }
     this.blades.meta[wholeName]['order'] = this.blades.count;
     this.blades.order.push(wholeName);
+
     // set event listener
     var me = this;
     bElem.addEventListener('click', function() { me.switchBlade(wholeName) }, false);
+
     // add to blades obj storage and set open blade
     this.blades.elem[wholeName] = bElem;    
     this.blades.open = this.blades.count;
     this.blades.count++;
+
     // add title
     var bTitle = document.createElement('h2');
     bTitle.setAttribute('id', wholeName + 'title');
     bTitle.setAttribute('class', 'btitle');
+    bTitle.style.color = this.bcolor;
     bTitle.innerHTML = bladeData[1];
     bElem.appendChild(bTitle);
+
     // add content container to blade, then add blade to its own container
     var bCont = document.createElement('div');
     bCont.setAttribute('id', wholeName + 'cont');
@@ -121,7 +127,7 @@ function switchBlade(bladeName) {
     // deselect current blade's title and collapse blade
     var curBlade = document.getElementById(this.blades.order[this.blades.open]);
     var curBladeTitle = document.getElementById(this.blades.order[this.blades.open] + 'title');
-    curBlade.style.width = "2em";
+    curBlade.style.width = this.hx + "em";
     curBladeTitle.style.color = this.bcolor;
     curBladeTitle.style.cursor = "pointer";
 

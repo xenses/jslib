@@ -49,15 +49,15 @@ Include the script on your webpage
 Then give yourself a new set of blades:
 
 ```
-  <script>
-    var blades = new bladeset({'name':'thes', 'x':40, 'focus':'#565656', 'blur':'#888'});
+var blades = new bladeset({'name':'thes', 'x':40, 'hx':2, 'focus':'#565656', 'blur':'#888'});
 ```
 
 'name' is the bladeset's name. It should be unique within a page, and
 affects the names of elements created by the script. `x` is the width
-of the bladeset, in ems. `focus` is the color that the selected
-blade's header will be displayed in, and `blur` is the color that all
-blurred blade headers will be.
+of the bladeset, in ems. `hx` is the blade header width in
+ems. `focus` is the color that the selected blade's header will be
+displayed in, and `blur` is the color that all blurred blade headers
+will be.
 
 After creating the bladeset, attach the `init` method to an event so
 that the blades themselves can be created:

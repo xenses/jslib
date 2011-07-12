@@ -2,6 +2,8 @@ CHANGELOG
 
 // blades
 
+1.0.3 Added hx argument
+
 1.0.2 Renamed functions, tweaks, docs
 
 1.0.1 Deselected blades now collapse to avoid hscroll in smaller
