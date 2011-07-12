@@ -1,0 +1,8 @@
+.blade { position: absolute; top: 0; border-left: solid thin #999; background-color: white; padding-top: 0.5em; height: 100%; }
+.blade p { margin-left: 3.5em; margin-right: 2em; }
+.blade h2.btitle { -webkit-transform: rotate(270deg); -moz-transform: rotate(270deg); transform: rotate(270deg);
+                   text-align: right;
+                   width: 6em; margin-left: -2.5em; margin-top: -3.3em;
+                   position: absolute; top: 6em; left: 0;
+                   cursor: pointer; }
+
