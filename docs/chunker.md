@@ -24,11 +24,24 @@ Directives
 ----------
 
 A directive is a line with `#` as its first character (*not* the first
-*non-whitespace* character).
+*non-whitespace* character). If a directive is in the form
 
-The first directive after any nonzero number of non-directives
-signifies the beginning of a new chunk.
+```
+#WORD:VALUE
+```
+
+then it is interpreted as a key/value pair and stored as metadata for
+the current chunk.
+
+The first directive after one or more non-directives signifies the
+beginning of a new chunk.
 
 There are two types of directives: *object directives*, which modify
 the behavior of the chunker object, and *chunk directives* which
 specify metadata about the current chunk.
+
+Object directives must occur while the chunk count is zero. The
+reserved `WORD`s for object directives are:
+
+```
+```
