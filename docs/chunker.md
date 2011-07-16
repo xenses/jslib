@@ -6,9 +6,10 @@ of blade elements on any number of pages. No external resources are
 needed.
 
 A chunker object has one method: `chunk`. This method takes a string
-as input, and returns either a structure (if the string could be
-parsed into chunks) or `null` (if the string could not be parsed).
+as input, and returns the number of chunks found (if the string could
+be parsed) or `null` (if the string could not be parsed).
 
+After parsing, the chunks are stored in `OBJECTNAME.chunks`
 
 Line types
 ----------
@@ -33,9 +34,6 @@ A directive is a line with `#` as its first character (*not* the first
 then it is interpreted as a key/value pair and stored as metadata for
 the current chunk.
 
-The first directive after one or more non-directives signifies the
-beginning of a new chunk.
-
 There are two types of directives: *object directives*, which modify
 the behavior of the chunker object, and *chunk directives* which
 specify metadata about the current chunk.
@@ -58,3 +56,5 @@ chunkNameDirective -- If set, this directive tells the chunker which
 
 ```
 
+The first directive after one or more non-directives signifies the
+beginning of a new chunk.
