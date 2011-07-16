@@ -44,4 +44,12 @@ Object directives must occur while the chunk count is zero. The
 reserved `WORD`s for object directives are:
 
 ```
+
+chunkNameDirective -- If set, this directive tells the chunker which
+                      chunk directive to use as the name of each
+                      chunk. This implies that chunks will be
+                      delivered as an Object-of-Objects instead of an
+                      Array-of-Objects, which is teh default.
+
 ```
+

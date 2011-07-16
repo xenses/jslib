@@ -42,12 +42,20 @@
 function chunker(args) {
     // constructor call variables
     // initialization variables
+    this.objectDirectiveList = { 'chunkNameDirective':True };
 }
 
 function chunk(string) {
     // reset chunks object & chunk count
     this.chunks = new Object;
     this.chunkCount = 0;
+    // set up directives
+    var dirRe = /^#/;
+    var dirExtractRe = /^#([\w])+:(.+)/;
     // split string
-    var lines = string.split("\n"
+    var lines = string.split("\n");
+    var numLines = lines.length;
+    for (var i = 0; i < numLines; i++) {
+        
+    }
 }
