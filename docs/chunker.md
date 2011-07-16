@@ -11,11 +11,14 @@ var chunker = new chunker;
 ```
 
 A chunker object has one method: `chunk`. This method takes a string
-as input, and returns the number of chunks found (if the string could
-be parsed) or `null` (if the string could not be parsed).
+as input. It returns the number of chunks found (if the string could
+be parsed), zero if there were no parsable chunks, or `null` if there
+was an error.
 
 After parsing, the chunks are stored in `chunker.chunks`, which may be
-an Array or Object (details below at `chunkNameDirective`).
+an Array or Object (details below at `chunkNameDirective`). If an
+error is indicated, the error message will be found in
+`chunker.error`.
 
 
 Line types
