@@ -5,6 +5,11 @@ This script is object-based, so only one copy is needed for any number
 of blade elements on any number of pages. No external resources are
 needed.
 
+```
+<script src="/path/to/chunker.js"></script>
+var chunker = new chunker;
+```
+
 A chunker object has one method: `chunk`. This method takes a string
 as input, and returns the number of chunks found (if the string could
 be parsed) or `null` (if the string could not be parsed).
