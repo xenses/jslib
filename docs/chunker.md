@@ -51,5 +51,10 @@ chunkNameDirective -- If set, this directive tells the chunker which
                       delivered as an Object-of-Objects instead of an
                       Array-of-Objects, which is teh default.
 
+                      If set, and the named directive does not occur
+                      in a chunk's metadata, it will be a fatal error.
+
+                      Example: 'chunkNameDirective':'name'
+
 ```
 
