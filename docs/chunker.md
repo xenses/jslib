@@ -52,17 +52,80 @@ Object directives must occur while the chunk count is zero. The
 reserved `WORD`s for object directives are:
 
 ```
-chunkNameDirective -- If set, this directive tells the chunker which
-                      chunk directive to use as the name of each
-                      chunk. This implies that chunks will be
-                      delivered as an Object-of-Objects instead of an
-                      Array-of-Objects, which is teh default.
+chunkName -- If set, this directive tells the chunker which chunk
+             directive to use as the name of each chunk. This implies
+             that chunks will be delivered as an Object-of-Objects
+             instead of an Array-of-Objects, which is the default.
 
-                      If set, and the named directive does not occur
-                      in a chunk's metadata, it will be a fatal error.
+             If set, and the given directive does not occur in a
+             chunk's metadata, it will be a fatal error.
 
-                      Example: 'chunkNameDirective':'name'
+             Example: 'chunkName':'name'
 ```
 
 The first directive after one or more non-directives signifies the
 beginning of a new chunk.
+
+
+Example
+-------
+
+```
+# this is an example file to be parsed by chunker.js
+#
+# anything that starts with a '#' is considered a directive, including
+# otherwise-blank lines like the one above.
+#
+# any directive will trigger a chunk "break", but unless they look
+# like a key/value pair as defined above, they are otherwise ignored
+# and are, basically, comments.
+#
+# here's a key/value directive:
+#
+#foo:23 skidoo
+#
+# The key here is 'foo' and the value is '23 skidoo'. This doesn't
+# work though:
+#
+# foo : 23 skidoo
+#
+# because there can't be any spaces until after the colon. Also, the
+# part before the colon has can consist only of alphanumerics and '_'.
+#
+# Let's make this parse run use name-based chunk storage instead of
+# array-based.
+#
+#chunkName:name
+#
+# Now we have to have a directive with a key of 'name' for every
+# chunk, or the parse run will fail.
+#
+#name:alice
+#
+# we can define as many other key/value pairs as we want on each
+# chunk. The chunker doesn't know about any of them except the Object
+# Directives, and simply stows them. This is what this first chunk
+# would look like so far, for instance:
+#
+# {
+#   'content':null,
+#   'meta':{
+#            'foo':'23 skidoo',
+#            'name':'alice'
+#          }
+# }
+#
+# time to add some actual content
+<p>
+  Probably in the form of fragmentary HTML documents, but anything
+  goes.
+</p>
+
+
+Whatever goes here gets copied into the chunk content verbatim.
+
+# Until the next directive is encountered, which terminates processing
+# of the current chunk and begins the next.
+#
+# And so on, and so on.
+```
