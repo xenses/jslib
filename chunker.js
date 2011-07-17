@@ -41,7 +41,6 @@
 
 function chunker(args) {
     // variables
-    this.curChunk      = { 'content':null, 'meta':{} };
     this.dirRe         = /^#/;
     this.dirExtractRe  = /^#(\w+):(.+)/;
     this.somethingRe   = /\S/;
@@ -56,8 +55,9 @@ function chunker(args) {
 
 function chunk(string) {
     // reset chunks storage & chunk count
-    this.chunks = new Array;
+    this.chunks     = new Array;
     this.chunkCount = 0;
+    this.curChunk   = { 'content':null, 'meta':{} };
     // split string
     var lines = string.split("\n");
     var numLines = lines.length;
@@ -66,8 +66,9 @@ function chunk(string) {
         if (this.error) break;
         this.parseLine(lines[this.i]);
     }
+    if (this.error) return;
     // stow last chunk
-    this.stowChunk();
+    if (this.curChunk.content) this.stowChunk();
     // done
     if (this.error) return null;
     return this.chunkCount
@@ -79,13 +80,8 @@ function parseLine(line) {
             // if we're looking at a directive and the current chunk
             // has content, then we're the first directive in a new
             // chunk and must handle chunk reset duties:
-            // increment chunk counter
-            this.chunkCount++;
-            // stitch content back together
-            this.curChunk.content = this.curChunk.content.join("\n");            
-            if (this.error) return;
-            // put curChunk in proper storage
             this.stowChunk();
+            if (this.error) return;
             // reset curChunk
             this.curChunk = { 'content':null, 'meta':{} };
         }
@@ -121,6 +117,10 @@ function parseLine(line) {
 }
 
 function stowChunk() {
+    // increment chunk counter
+    this.chunkCount++;
+    // stitch content back together
+    this.curChunk.content = this.curChunk.content.join("\n");            
     if (this.ods.chunkName) {
         // name-based (object) chunks
         if (!this.curChunk.meta[this.ods.chunkName]) {
