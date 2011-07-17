@@ -66,7 +66,6 @@ function chunk(string) {
         if (this.error) break;
         this.parseLine(lines[this.i]);
     }
-    if (this.error) return;
     // stow last chunk
     if (this.curChunk.content) this.stowChunk();
     // done
