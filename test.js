@@ -61,7 +61,7 @@ function is(expr, expected, msg, invert) {
             passed = false
         }
     }
-    if (!passed) testPrintFailMsg(msg, expected, expr);
+    if (!passed) testPrintFailMsg(msg, expected, expr, invert);
 }
 
 function isnt(exp, result, msg) {
@@ -69,11 +69,14 @@ function isnt(exp, result, msg) {
     return rv;
 }
 
-function testPrintFailMsg(msg, expected, test) {
+function testPrintFailMsg(msg, expected, test, invert) {
     print("FAIL " + jsltest_run + ": " + msg);
-    print("  Expected: '" + expected + "'");
-    print("  Got     : '" + test + "'");
-    return false;
+    if (invert) {
+        print("  Expected anything but " + expected + " and got it anyway");
+    } else {
+        print("  Expected: '" + expected + "'");
+        print("  Got     : '" + test + "'");
+    }
 }
 
 function testPrintSummary() {
