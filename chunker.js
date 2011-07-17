@@ -1,5 +1,5 @@
 // chunker.js
-// v1.0.0 - 14 July 2011
+// v1.0.0 - 17 July 2011
 //
 // Turn a formatted string into a datastructure, or not
 
