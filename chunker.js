@@ -63,7 +63,7 @@ function chunk(string) {
     // process lines
     for (this.i = 0; this.i < numLines; this.i++) {
         if (this.error) break;
-        this.parseLine(lines[i]);
+        this.parseLine(lines[this.i]);
     }
     // done
     if (this.error) return null;
