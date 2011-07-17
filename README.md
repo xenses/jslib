@@ -8,6 +8,7 @@ What's here:
   * `blades.js`, A bladed UI component
   * `chunker.js`, A utility class which turns strings into chunks of data
   * `slideshow.js`, A self-loading, self-contained slide deck viewer.
+  * 'test.js', The world's tiniest unittest lib
 
 User-oriented documentation is in the `docs` directory, in markdown
 format.

@@ -45,38 +45,44 @@ var jsltest_pass = 0;
 function is(expr, expected, msg, invert) {
     var passed;
     jsltest_run++;
-    var test = eval(exp);
+    //var test = eval(expr);
     if (invert) {
-        if (test != expected) {
+        if (expr != expected) {
             jsltest_pass++;
             passed = true;
         } else {
             passed = false
         }
     } else {
-        if (test == expected) {
+        if (expr == expected) {
             jsltest_pass++;
             passed = true;
         } else {
             passed = false
         }
     }
+    if (!passed) testPrintFailMsg(msg, expected, expr);
 }
 
 function isnt(exp, result, msg) {
-    var rv = is(exp, result, msg, 1)) {
+    var rv = is(exp, result, msg, true);
     return rv;
 }
 
-function testPrintFailMsg() {
+function testPrintFailMsg(msg, expected, test) {
     print("FAIL " + jsltest_run + ": " + msg);
-    print("  Expected: '" + result + "'");
+    print("  Expected: '" + expected + "'");
     print("  Got     : '" + test + "'");
     return false;
 }
 
 function testPrintSummary() {
     print("End of test");
-    print("  Tests run..... " + trun);
-    print("  Tests passed.. " + tpas);
+    print("  Tests run..... " + jsltest_run);
+    print("  Tests passed.. " + jsltest_pass);
+    if (jsltest_run == jsltest_pass) {
+        print ("Success.");
+    } else {
+        print(">>>FAIL<<<");
+    }
 }
