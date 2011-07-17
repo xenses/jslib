@@ -1,0 +1,6 @@
+These tests are meant to be executed thus:
+
+    js <TESTFILE>
+
+They are written using, and so far tested only against, the
+Spidermonkey javascript runtime.
