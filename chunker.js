@@ -51,6 +51,7 @@ function chunker(args) {
     // methods
     this.chunk     = chunk;
     this.parseLine = parseLine;
+    this.stowChunk = stowChunk;
 }
 
 function chunk(string) {
@@ -65,6 +66,8 @@ function chunk(string) {
         if (this.error) break;
         this.parseLine(lines[this.i]);
     }
+    // stow last chunk
+    this.stowChunk();
     // done
     if (this.error) return null;
     return this.chunkCount
@@ -80,18 +83,9 @@ function parseLine(line) {
             this.chunkCount++;
             // stitch content back together
             this.curChunk.content = this.curChunk.content.join("\n");            
+            if (this.error) return;
             // put curChunk in proper storage
-            if (this.ods.chunkName) {
-                // name-based (object) chunks
-                if (!this.curChunk.meta[this.ods.chunkName]) {
-                    this.error = "Named chunks are in effect but no directive '" + this.ods.chunkName + "' for chunk ending at line " + this.i;
-                    return;
-                }
-                this.chunks[this.curChunk.meta[this.ods.chunkName]] = this.curChunk;
-            } else {
-                // array chunks
-                this.chunks.push(this.curChunk);
-            }            
+            this.stowChunk();
             // reset curChunk
             this.curChunk = { 'content':null, 'meta':{} };
         }
@@ -99,7 +93,7 @@ function parseLine(line) {
         // care. it's effectively a comment but still counts for chunk
         // separation purposes
         var kv = this.dirExtractRe.exec(line);
-        if (kv.length > 0) {
+        if (kv != null && kv.length > 0) {
             // handle object directives
             if (this.objectDirList[kv[1]]) {
                 if (this.chunkCount > 0) {
@@ -124,4 +118,18 @@ function parseLine(line) {
         // add line
         this.curChunk.content.push(line);
     }
+}
+
+function stowChunk() {
+    if (this.ods.chunkName) {
+        // name-based (object) chunks
+        if (!this.curChunk.meta[this.ods.chunkName]) {
+            this.error = "Named chunks are in effect but no directive '" + this.ods.chunkName + "' for chunk ending at line " + this.i;
+            return;
+        }
+        this.chunks[this.curChunk.meta[this.ods.chunkName]] = this.curChunk;
+    } else {
+        // array chunks
+        this.chunks.push(this.curChunk);
+    }            
 }
