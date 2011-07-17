@@ -40,22 +40,88 @@
 //-----------------------------------------------------------------------
 
 function chunker(args) {
-    // constructor call variables
-    // initialization variables
-    this.objectDirectiveList = { 'chunkNameDirective':True };
+    // variables
+    this.curChunk      = { 'content':null, 'meta':{} };
+    this.dirRe         = /^#/;
+    this.dirExtractRe  = /^#(\w+):(.+)/;
+    this.somethingRe   = /\S/;
+    this.error         = null;
+    this.objectDirList = { 'chunkName':true };
+    this.ods = { 'chunkNamed':false };
+    // methods
+    this.chunk     = chunk;
+    this.parseLine = parseLine;
 }
 
 function chunk(string) {
-    // reset chunks object & chunk count
-    this.chunks = new Object;
+    // reset chunks storage & chunk count
+    this.chunks = new Array;
     this.chunkCount = 0;
-    // set up directives
-    var dirRe = /^#/;
-    var dirExtractRe = /^#([\w])+:(.+)/;
     // split string
     var lines = string.split("\n");
     var numLines = lines.length;
-    for (var i = 0; i < numLines; i++) {
-        
+    // process lines
+    for (this.i = 0; this.i < numLines; this.i++) {
+        if (this.error) break;
+        this.parseLine(lines[i]);
+    }
+    // done
+    if (this.error) return null;
+    return this.chunkCount
+}
+
+function parseLine(line) {
+    if (this.dirRe.test(line)) {
+        if (this.curChunk.content) {
+            // if we're looking at a directive and the current chunk
+            // has content, then we're the first directive in a new
+            // chunk and must handle chunk reset duties:
+            // increment chunk counter
+            this.chunkCount++;
+            // stitch content back together
+            this.curChunk.content = this.curChunk.content.join("\n");            
+            // put curChunk in proper storage
+            if (this.ods.chunkName) {
+                // name-based (object) chunks
+                if (!this.curChunk.meta[this.ods.chunkName]) {
+                    this.error = "Named chunks are in effect but no directive '" + this.ods.chunkName + "' for chunk ending at line " + this.i;
+                    return;
+                }
+                this.chunks[this.curChunk.meta[this.ods.chunkName]] = this.curChunk;
+            } else {
+                // array chunks
+                this.chunks.push(this.curChunk);
+            }            
+            // reset curChunk
+            this.curChunk = { 'content':null, 'meta':{} };
+        }
+        // unless it looks like a key/value line, we actually don't
+        // care. it's effectively a comment but still counts for chunk
+        // separation purposes
+        var kv = this.dirExtractRe.exec(line);
+        if (kv.length > 0) {
+            // handle object directives
+            if (this.objectDirList[kv[1]]) {
+                if (this.chunkCount > 0) {
+                    this.error = "Object directive found after first chunk at line" + (this.i + 1);
+                    return;
+                }
+                // change chunks container to an object if named
+                // chunks are called for
+                if (kv[1] == 'chunkName') this.chunks = new Object;
+                // set object directive
+                this.ods[kv[1]] = kv[2];
+                return;
+            }
+            // handle other directives
+            this.curChunk.meta[kv[1]] = kv[2];
+        }
+    } else {
+        // ignore blank lines until we're inside content
+        if (!this.somethingRe.test(line) && !this.curChunk.content) return;
+        // if we're the first line of content, convert from null to empty array
+        if (!this.curChunk.content) this.curChunk.content = new Array;
+        // add line
+        this.curChunk.content.push(line);
     }
 }
