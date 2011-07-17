@@ -1,5 +1,5 @@
 // test.js
-// v1.0.0 - 17 July 2011
+// v1.0.1 - 17 July 2011
 //
 // A tiny unittest library
 
