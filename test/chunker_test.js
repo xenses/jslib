@@ -109,10 +109,3 @@ if (c.chunks[1]['content'] != "chunk\n\nnumber\n2") {
 
 
 printSums();
-
-//----------------------------------------
-function printSums() {
-    print("End of test");
-    print("  Tests run..... " + trun);
-    print("  Tests passed.. " + tpas);
-}
