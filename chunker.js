@@ -92,7 +92,7 @@ function parseLine(line) {
             // handle object directives
             if (this.objectDirList[kv[1]]) {
                 if (this.chunkCount > 0) {
-                    this.error = "Object directive found after first chunk at line" + (this.i + 1);
+                    this.error = "Object directive found after first chunk at line " + (this.i + 1);
                     return;
                 }
                 // change chunks container to an object if named
