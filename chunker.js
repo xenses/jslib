@@ -1,5 +1,5 @@
 // chunker.js
-// v1.0.0 - 17 July 2011
+// v1.0.1 - 18 July 2011
 //
 // Turn a formatted string into a datastructure, or not
 
@@ -56,6 +56,7 @@ function chunker(args) {
 function chunk(string) {
     // reset chunks storage & chunk count
     this.chunks     = new Array;
+    this.error      = null;
     this.chunkCount = 0;
     this.curChunk   = { 'content':null, 'meta':{} };
     // split string
