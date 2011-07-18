@@ -1,5 +1,5 @@
 // test.js
-// v1.0.1 - 17 July 2011
+// v1.0.2 - 18 July 2011
 //
 // A tiny unittest library
 
@@ -45,7 +45,6 @@ var jsltest_pass = 0;
 function is(expr, expected, msg, invert) {
     var passed;
     jsltest_run++;
-    //var test = eval(expr);
     if (invert) {
         if (expr != expected) {
             jsltest_pass++;
@@ -69,13 +68,13 @@ function isnt(exp, result, msg) {
     return rv;
 }
 
-function testPrintFailMsg(msg, expected, test, invert) {
-    print("FAIL " + jsltest_run + ": " + msg);
+function testPrintFailMsg(msg, expected, result, invert) {
+    print("Test " + jsltest_run + " FAILED: " + msg);
     if (invert) {
         print("  Expected anything but " + expected + " and got it anyway");
     } else {
         print("  Expected: '" + expected + "'");
-        print("  Got     : '" + test + "'");
+        print("  Got     : '" + result + "'");
     }
 }
 
