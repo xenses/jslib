@@ -1,6 +1,12 @@
 CHANGELOG
 
+// chunker
+
+1.0.1 Now with tests and bugfixes (18 Jul 2011)
+
 // test
+
+1.0.2 Cleanup (18 Jul 2011)
 
 1.0.1 Failure messages work with isnt
 
