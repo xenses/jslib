@@ -14,7 +14,6 @@ called at the end of a test document to write out a summary of the
 test run.
 
 is() and isnt()
-
 ---------------
 
 These functions work in exactly the same way, and take exactly the
