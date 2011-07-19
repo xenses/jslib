@@ -153,7 +153,39 @@ function switchBlade(bladeName) {
     curBladeTitle.style.cursor = "default";
 }
 
+//----------------------------------------------------------------------
+
 function setContent(bladeName, content) {
     var bCont = document.getElementById(bladeName + 'cont');
     bCont.innerHTML = content;
+}
+
+function loadBlade(bladeName, url) {
+    var r = new XMLHttpRequest();
+    var me = this;
+    r.open("GET", url, true);
+    r.onreadystatechange = 
+        function() { 
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    this.setcontent((this.name + bladeName), req.responseText);
+                }
+            }
+        };
+    r.send(null);
+}
+
+function loadBlades (c, url) {
+    var r = new XMLHttpRequest();
+    var me = this;
+    r.open("GET", url, true);
+    r.onreadystatechange = 
+        function() { 
+            if (req.readyState == 4) {
+                if (req.status == 200) {
+                    this.setcontent((this.name + bladeName), req.responseText);
+                }
+            }
+        };
+    r.send(null);
 }
