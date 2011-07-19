@@ -1,5 +1,5 @@
 // test.js
-// v1.0.2 - 18 July 2011
+// v1.1.0 - 18 July 2011
 //
 // A tiny unittest library
 
@@ -41,6 +41,14 @@
 
 var jsltest_run  = 0;
 var jsltest_pass = 0;
+
+try {
+    if (document) {
+        print = function(msg) { document.write("<div>" + msg + "</div>") };
+    }
+} catch(err) {
+    true;
+}
 
 function is(expr, expected, msg, invert) {
     var passed;

@@ -1,5 +1,12 @@
 CHANGELOG
 
+// test
+
+1.1.0 test.js can now be used in console testing scripts or in browser
+      testing documents
+
+      Added docs (19 Jul 2011)
+
 // chunker
 
 1.0.1 Now with tests and bugfixes (18 Jul 2011)
