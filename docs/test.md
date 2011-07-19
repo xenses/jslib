@@ -39,15 +39,17 @@ To use it in an HTML document, I recommend a minimal setup like
 <html lang="en">
 <head>
   <script src="/path/to/test.js"></script>
-  <style>
-    body { font-family: monospace; white-space: pre; }
-  </style>
+  <style>body { font-family: monospace; white-space: pre; }</style>
 </head>
 <body>
   <script>
-    // tests go here!
+    // tests go here! (or you could do
+    // '<script src="/path/to/test_script.js"></script>'
+    // instead of inlining
     is(2+2, 4, "we can add");
     is(true, false, "a fallacy");
     testPrintSummary();
   </script>
+</body>
+</html>
 ```
