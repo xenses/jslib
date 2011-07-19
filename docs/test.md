@@ -45,7 +45,7 @@ To use it in an HTML document, I recommend a minimal setup like
   <script>
     // tests go here! (or you could do
     // '<script src="/path/to/test_script.js"></script>'
-    // instead of inlining
+    // instead of inlining)
     is(2+2, 4, "we can add");
     is(true, false, "a fallacy");
     testPrintSummary();
