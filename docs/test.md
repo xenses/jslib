@@ -2,9 +2,10 @@ Firepear jslib test library
 ===========================
 
 test.js is a very simple testing library on the model of Perl's
-`Test::More`.
+`Test::More`. It can be used in standalone test scripts (with
+Spidermonkey or V8) or in HTML-embedded testing.
 
-At the moment it provides two testing functions:
+It currently provides two testing functions:
 
 * `is`, which tests for equivalence
 * `isnt`, which tests for difference
