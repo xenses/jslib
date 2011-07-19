@@ -54,3 +54,15 @@ To use it in an HTML document, I recommend a minimal setup like
 </body>
 </html>
 ```
+
+The above tests produce the following output:
+
+```
+Test 2 FAILED: a fallacy
+  Expected: 'false'
+  Got     : 'true'
+End of test
+  Tests run..... 2
+  Tests passed.. 1
+>>>FAIL<<<
+```
